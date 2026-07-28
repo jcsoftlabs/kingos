@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-affiche: "Inter", system-ui, sans-serif;
+
+  /* Jetons sémantiques — dérivés du logo Kingo's (voir tailwind.config.ts) */
+  --couleur-fond: theme("colors.creme.100");
+  --couleur-texte: theme("colors.marine.500");
+  --couleur-accent: theme("colors.magenta.500");
+  --couleur-lien: theme("colors.cyan.500");
+}
+
+* {
+  border-color: theme("colors.marine.100");
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--couleur-fond);
+  color: var(--couleur-texte);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Dégradé du globe du logo — réutilisable pour les accents décoratifs */
+.degrade-globe {
+  background: linear-gradient(
+    135deg,
+    theme("colors.creme.200") 0%,
+    theme("colors.lime.DEFAULT") 30%,
+    theme("colors.cyan.DEFAULT") 60%,
+    theme("colors.magenta.DEFAULT") 100%
+  );
+}
