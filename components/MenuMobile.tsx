@@ -9,7 +9,7 @@ const LIENS = [
   { href: "/ressources", libelle: "Ressources" },
   { href: "/a-propos", libelle: "À propos" },
   { href: "/contact", libelle: "Contact" },
-  { href: "/espace", libelle: "Espace client" },
+  { href: "/espace", libelle: "Mon compte" },
 ];
 
 export function MenuMobile() {

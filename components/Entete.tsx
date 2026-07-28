@@ -43,7 +43,7 @@ export function Entete() {
             href="/espace"
             className="hidden text-sm font-bold text-creme-100 hover:text-magenta-300 sm:block"
           >
-            Espace client
+            Mon compte
           </Link>
           <Bouton href="/devis" taille="petit">
             Demander un devis

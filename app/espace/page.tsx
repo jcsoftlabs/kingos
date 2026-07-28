@@ -1,8 +1,9 @@
-import { obtenirUtilisateurCourant } from "@/lib/auth-serveur";
+import { redirect } from "next/navigation";
+import { obtenirUtilisateurCourant, ROLES_BACK_OFFICE } from "@/lib/auth-serveur";
 import { FormulaireConnexion } from "@/components/auth/FormulaireConnexion";
 import { BoutonDeconnexion } from "@/components/auth/BoutonDeconnexion";
 
-export const metadata = { title: "Espace client" };
+export const metadata = { title: "Mon compte" };
 export const dynamic = "force-dynamic"; // dépend du cookie de session, jamais mis en cache
 
 const LIBELLES_ROLE: Record<string, string> = {
@@ -17,13 +18,22 @@ const LIBELLES_ROLE: Record<string, string> = {
 export default async function PageEspaceClient() {
   const utilisateur = await obtenirUtilisateurCourant();
 
+  // Un compte back-office qui atterrit ici (login direct, ou redirigé depuis
+  // /admin faute de session) n'a rien à faire sur la fiche profil client —
+  // direction le back-office. C'était la confusion signalée : /admin
+  // renvoyait vers une page visiblement "client", pas un vrai portail staff.
+  if (utilisateur && ROLES_BACK_OFFICE.includes(utilisateur.role as (typeof ROLES_BACK_OFFICE)[number])) {
+    redirect("/admin");
+  }
+
   if (!utilisateur) {
     return (
       <section className="mx-auto max-w-md px-4 py-20 sm:px-6">
-        <p className="text-sm font-bold uppercase tracking-wide text-magenta-500">Espace client</p>
-        <h1 className="mt-2 text-3xl font-extrabold text-marine-500">Connexion</h1>
+        <p className="text-sm font-bold uppercase tracking-wide text-magenta-500">Connexion</p>
+        <h1 className="mt-2 text-3xl font-extrabold text-marine-500">Accédez à votre compte</h1>
         <p className="mt-3 text-marine-400">
-          Suivi de commandes, devis et factures — connectez-vous avec les identifiants de votre compte Kingo&apos;s.
+          Client, ou membre de l&apos;équipe Kingo&apos;s — connectez-vous avec vos identifiants, vous serez
+          redirigé au bon endroit.
         </p>
         <div className="mt-8">
           <FormulaireConnexion />
