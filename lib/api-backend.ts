@@ -6,11 +6,6 @@ import "server-only";
  * L'URL de l'API et le jeton de service ne quittent donc jamais le serveur.
  */
 
-const URL_API = process.env.URL_API;
-const JETON_SERVICE = process.env.JETON_SERVICE;
-
-if (!URL_API) throw new Error("URL_API manquant dans l'environnement");
-
 export interface ReponseApi<T> {
   succes: boolean;
   donnees?: T;
@@ -21,6 +16,15 @@ export async function apiBackend<T>(
   chemin: string,
   options: RequestInit & { revalidate?: number | false } = {},
 ): Promise<{ statut: number; corps: ReponseApi<T> }> {
+  // Lu à l'appel, pas au chargement du module : sinon une variable manquante
+  // fait échouer `next build` en entier dès qu'une seule route l'importe,
+  // même pour des pages qui ne l'appellent jamais réellement (vu en
+  // production sur Vercel — "Collecting page data" évalue tous les modules
+  // des Route Handlers, y compris ceux qui ne s'exécuteront qu'à la requête).
+  const URL_API = process.env.URL_API;
+  const JETON_SERVICE = process.env.JETON_SERVICE;
+  if (!URL_API) throw new Error("URL_API manquant dans l'environnement");
+
   const { revalidate, ...init } = options;
 
   const reponse = await fetch(`${URL_API}${chemin}`, {
