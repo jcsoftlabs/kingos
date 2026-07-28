@@ -27,6 +27,9 @@ export default async function LayoutAdmin({ children }: { children: React.ReactN
     redirect("/admin/connexion");
   }
 
+  // La création de comptes staff est réservée au SUPER_ADMIN (voir /admin/utilisateurs).
+  const liens = LIENS.filter((lien) => lien.href !== "/admin/utilisateurs" || utilisateur.role === "SUPER_ADMIN");
+
   return (
     <div className="flex min-h-screen bg-creme-100">
       <aside className="flex w-60 flex-col bg-marine-500 text-creme-100 print:hidden">
@@ -35,7 +38,7 @@ export default async function LayoutAdmin({ children }: { children: React.ReactN
           <span className="text-xs font-bold uppercase tracking-wide text-lime">Admin</span>
         </div>
         <nav className="flex-1 space-y-1 px-3">
-          {LIENS.map((lien) => (
+          {liens.map((lien) => (
             <Link
               key={lien.href}
               href={lien.href}

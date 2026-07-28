@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Image from "next/image";
 import { apiBackendAuthentifie } from "@/lib/auth-serveur";
 import { formaterHTG } from "@/lib/types-catalogue";
 import { BoutonImprimer } from "@/components/admin/BoutonImprimer";
@@ -53,7 +54,14 @@ export default async function PageRecu({ params }: { params: Promise<{ numero: s
           de caisse sont noir et blanc). */}
       <div className="mx-auto w-[80mm] bg-white p-3 font-mono text-[11px] leading-tight text-black print:w-full">
         <div className="text-center">
-          <p className="text-sm font-bold">{contenu.emetteur.raisonSociale.toUpperCase()}</p>
+          <Image
+            src="/logo-kingos.png"
+            alt={contenu.emetteur.raisonSociale}
+            width={200}
+            height={200}
+            className="mx-auto h-10 w-auto grayscale"
+          />
+          <p className="mt-1 text-sm font-bold">{contenu.emetteur.raisonSociale.toUpperCase()}</p>
           <p>{contenu.emetteur.adresse}</p>
           <p>{contenu.emetteur.ville}</p>
           <p>{contenu.emetteur.telephone}</p>
