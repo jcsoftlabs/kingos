@@ -1,5 +1,6 @@
 import { formaterHTG } from "@/lib/types-catalogue";
 import { BadgeStatut } from "@/components/admin/BadgeStatut";
+import { BoutonPdf } from "@/components/admin/BoutonPdf";
 
 interface Commande {
   id: string;
@@ -44,6 +45,7 @@ export function TableauDeBordClient({ commandes, devis, factures }: { commandes:
                 <span className="w-32 text-right font-bold tabular-nums text-marine-500">
                   {formaterHTG((BigInt(f.totalCents) - BigInt(f.payeCents)).toString())} restant
                 </span>
+                <BoutonPdf type="factures" numero={f.numero} />
               </li>
             ))}
           </ul>
@@ -86,6 +88,7 @@ export function TableauDeBordClient({ commandes, devis, factures }: { commandes:
                   <span className="flex-1 font-bold text-marine-500">{d.numero}</span>
                   <BadgeStatut statut={d.statut} />
                   <span className="w-24 text-right font-bold tabular-nums text-marine-500">{formaterHTG(d.totalCents)}</span>
+                  <BoutonPdf type="devis" numero={d.numero} />
                 </li>
               ))}
             </ul>
@@ -104,6 +107,7 @@ export function TableauDeBordClient({ commandes, devis, factures }: { commandes:
                 <li key={f.id} className="flex items-center gap-3 px-5 py-3 text-sm">
                   <span className="flex-1 font-bold text-marine-500">{f.numero}</span>
                   <span className="text-right font-bold tabular-nums text-marine-500">{formaterHTG(f.totalCents)}</span>
+                  <BoutonPdf type="factures" numero={f.numero} />
                 </li>
               ))}
             </ul>
