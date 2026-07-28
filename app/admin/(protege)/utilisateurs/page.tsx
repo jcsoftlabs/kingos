@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { apiBackendAuthentifie, obtenirUtilisateurCourant } from "@/lib/auth-serveur";
 import { FormulaireNouvelUtilisateur } from "@/components/admin/utilisateurs/FormulaireNouvelUtilisateur";
 import { BoutonActivation } from "@/components/admin/utilisateurs/BoutonActivation";
+import { EntetePage } from "@/components/admin/EntetePage";
 
 export const metadata = { title: "Utilisateurs — Admin" };
 
@@ -33,60 +34,62 @@ export default async function PageUtilisateursAdmin() {
   const utilisateurs = corps.succes && corps.donnees ? corps.donnees : [];
 
   return (
-    <div>
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-extrabold text-marine-500">Utilisateurs</h1>
+    <>
+      <EntetePage
+        titre="Utilisateurs"
+        description="Comptes du personnel Kingo's — administrateur, commercial, production, lecture seule. Les comptes client s'inscrivent eux-mêmes via le parcours devis, pas ici."
+      >
         <FormulaireNouvelUtilisateur />
-      </div>
-      <p className="mt-2 max-w-2xl text-sm text-marine-400">
-        Comptes du personnel Kingo&apos;s — administrateur, commercial, production, lecture seule. Les comptes
-        client s&apos;inscrivent eux-mêmes via le parcours devis, pas ici.
-      </p>
+      </EntetePage>
 
-      <div className="mt-8 overflow-x-auto rounded-marque border border-marine-100 bg-white">
-        <table className="w-full text-sm">
-          <thead className="border-b border-marine-100 bg-creme-200 text-left text-xs font-bold uppercase tracking-wide text-marine-400">
-            <tr>
-              <th className="px-4 py-3">Nom</th>
-              <th className="px-4 py-3">E-mail</th>
-              <th className="px-4 py-3">Rôle</th>
-              <th className="px-4 py-3">Statut</th>
-              <th className="px-4 py-3"></th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-marine-100">
-            {utilisateurs.length === 0 ? (
+      <div className="overflow-hidden rounded-xl border border-marine-100 bg-white shadow-sm">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="border-b border-marine-100 bg-creme-100 text-left text-[11px] font-bold uppercase tracking-wide text-marine-400">
               <tr>
-                <td colSpan={5} className="px-4 py-6 text-center text-marine-400">
-                  Aucun compte staff pour l&apos;instant.
-                </td>
+                <th className="px-5 py-3">Nom</th>
+                <th className="px-5 py-3">E-mail</th>
+                <th className="px-5 py-3">Rôle</th>
+                <th className="px-5 py-3">Statut</th>
+                <th className="px-5 py-3"></th>
               </tr>
-            ) : (
-              utilisateurs.map((u) => (
-                <tr key={u.id}>
-                  <td className="px-4 py-3 font-bold text-marine-500">
-                    {u.prenom ? `${u.prenom} ${u.nom}` : u.nom}
-                  </td>
-                  <td className="px-4 py-3 text-marine-400">{u.email}</td>
-                  <td className="px-4 py-3 text-marine-400">{LIBELLES_ROLE[u.role] ?? u.role}</td>
-                  <td className="px-4 py-3">
-                    <span
-                      className={`rounded-marque px-2.5 py-1 text-xs font-bold ${
-                        u.actif ? "bg-foret-50 text-foret-600" : "bg-creme-300 text-marine-400"
-                      }`}
-                    >
-                      {u.actif ? "Actif" : "Désactivé"}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    {u.role !== "SUPER_ADMIN" && <BoutonActivation utilisateurId={u.id} actif={u.actif} />}
+            </thead>
+            <tbody className="divide-y divide-marine-100">
+              {utilisateurs.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-5 py-12 text-center text-marine-400">
+                    Aucun compte staff pour l&apos;instant.
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : (
+                utilisateurs.map((u) => (
+                  <tr key={u.id} className="transition-colors hover:bg-creme-100">
+                    <td className="px-5 py-3 font-bold text-marine-500">
+                      {u.prenom ? `${u.prenom} ${u.nom}` : u.nom}
+                    </td>
+                    <td className="px-5 py-3 text-marine-400">{u.email}</td>
+                    <td className="px-5 py-3 text-marine-400">{LIBELLES_ROLE[u.role] ?? u.role}</td>
+                    <td className="px-5 py-3">
+                      <span
+                        className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-bold ring-1 ring-inset ${
+                          u.actif
+                            ? "bg-foret-50 text-foret-600 ring-foret-100"
+                            : "bg-marine-50 text-marine-400 ring-marine-100"
+                        }`}
+                      >
+                        {u.actif ? "Actif" : "Désactivé"}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3 text-right">
+                      {u.role !== "SUPER_ADMIN" && <BoutonActivation utilisateurId={u.id} actif={u.actif} />}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

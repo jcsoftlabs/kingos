@@ -1,5 +1,6 @@
 import { apiBackendAuthentifie, obtenirUtilisateurCourant } from "@/lib/auth-serveur";
 import { FormulaireParametres } from "@/components/admin/parametres/FormulaireParametres";
+import { EntetePage } from "@/components/admin/EntetePage";
 
 export const metadata = { title: "Paramètres — Admin" };
 
@@ -28,20 +29,19 @@ export default async function PageParametresAdmin() {
   const parametres = corps.succes && corps.donnees ? corps.donnees : null;
 
   return (
-    <div>
-      <h1 className="text-2xl font-extrabold text-marine-500">Paramètres de l&apos;entreprise</h1>
-      <p className="mt-2 max-w-2xl text-sm text-marine-400">
-        Ces informations apparaissent sur tous les devis, factures et reçus — un changement d&apos;adresse ou de
-        téléphone se fait ici, sans redéploiement.
-      </p>
+    <>
+      <EntetePage
+        titre="Paramètres de l'entreprise"
+        description="Ces informations apparaissent sur tous les devis, factures et reçus — un changement d'adresse ou de téléphone se fait ici, sans redéploiement."
+      />
 
-      <div className="mt-8 max-w-2xl">
+      <div className="max-w-3xl rounded-xl border border-marine-100 bg-white p-6 shadow-sm">
         {parametres ? (
           <FormulaireParametres parametres={parametres} lectureSeule={!peutModifier} />
         ) : (
           <p className="text-marine-400">Impossible de charger les paramètres.</p>
         )}
       </div>
-    </div>
+    </>
   );
 }

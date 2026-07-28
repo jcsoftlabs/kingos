@@ -1,19 +1,40 @@
-import Link from "next/link";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 import { obtenirUtilisateurCourant, ROLES_BACK_OFFICE } from "@/lib/auth-serveur";
-import { BoutonDeconnexion } from "@/components/auth/BoutonDeconnexion";
+import { BoutonDeconnexionAdmin } from "@/components/admin/BoutonDeconnexionAdmin";
+import { NavigationAdmin, type Section } from "@/components/admin/NavigationAdmin";
 
 export const dynamic = "force-dynamic"; // tout dépend du rôle de la session courante
 
-const LIENS = [
-  { href: "/admin", libelle: "Tableau de bord" },
-  { href: "/admin/commandes", libelle: "Commandes" },
-  { href: "/admin/devis", libelle: "Devis" },
-  { href: "/admin/factures", libelle: "Factures" },
-  { href: "/admin/catalogue", libelle: "Catalogue" },
-  { href: "/admin/utilisateurs", libelle: "Utilisateurs" },
-  { href: "/admin/parametres", libelle: "Paramètres" },
+const LIBELLES_ROLE: Record<string, string> = {
+  SUPER_ADMIN: "Super administrateur",
+  ADMIN: "Administrateur",
+  COMMERCIAL: "Commercial",
+  PRODUCTION: "Production",
+  LECTURE: "Lecture seule",
+};
+
+const SECTIONS: Section[] = [
+  {
+    titre: "Pilotage",
+    liens: [{ href: "/admin", libelle: "Tableau de bord", icone: "tableau" }],
+  },
+  {
+    titre: "Activité",
+    liens: [
+      { href: "/admin/commandes", libelle: "Commandes", icone: "panier" },
+      { href: "/admin/devis", libelle: "Devis", icone: "devis" },
+      { href: "/admin/factures", libelle: "Factures", icone: "facture" },
+    ],
+  },
+  {
+    titre: "Configuration",
+    liens: [
+      { href: "/admin/catalogue", libelle: "Catalogue", icone: "catalogue" },
+      { href: "/admin/utilisateurs", libelle: "Utilisateurs", icone: "utilisateurs" },
+      { href: "/admin/parametres", libelle: "Paramètres", icone: "reglages" },
+    ],
+  },
 ];
 
 export default async function LayoutAdmin({ children }: { children: React.ReactNode }) {
@@ -27,36 +48,47 @@ export default async function LayoutAdmin({ children }: { children: React.ReactN
     redirect("/admin/connexion");
   }
 
-  // La création de comptes staff est réservée au SUPER_ADMIN (voir /admin/utilisateurs).
-  const liens = LIENS.filter((lien) => lien.href !== "/admin/utilisateurs" || utilisateur.role === "SUPER_ADMIN");
+  // La gestion des comptes staff est réservée au SUPER_ADMIN (voir /admin/utilisateurs).
+  const sections = SECTIONS.map((section) => ({
+    ...section,
+    liens: section.liens.filter((l) => l.href !== "/admin/utilisateurs" || utilisateur.role === "SUPER_ADMIN"),
+  })).filter((section) => section.liens.length > 0);
+
+  const initiales = `${utilisateur.prenom?.[0] ?? ""}${utilisateur.nom[0] ?? ""}`.toUpperCase() || "K";
 
   return (
     <div className="flex min-h-screen bg-creme-100">
-      <aside className="flex w-60 flex-col bg-marine-500 text-creme-100 print:hidden">
-        <div className="flex items-center gap-2 px-6 py-5">
-          <Image src="/logo-kingos.png" alt="Kingo's" width={100} height={100} className="h-8 w-auto brightness-0 invert" />
-          <span className="text-xs font-bold uppercase tracking-wide text-lime">Admin</span>
+      <aside className="fixed inset-y-0 left-0 z-20 flex w-60 flex-col bg-marine-600 print:hidden">
+        <div className="flex h-16 items-center gap-2.5 border-b border-white/10 px-5">
+          <Image src="/logo-kingos.png" alt="Kingo's" width={120} height={120} className="h-7 w-auto brightness-0 invert" />
+          <span className="rounded bg-magenta-500 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
+            Admin
+          </span>
         </div>
-        <nav className="flex-1 space-y-1 px-3">
-          {liens.map((lien) => (
-            <Link
-              key={lien.href}
-              href={lien.href}
-              className="block rounded-marque px-3 py-2 text-sm font-bold text-creme-100 hover:bg-marine-600 hover:text-magenta-300"
-            >
-              {lien.libelle}
-            </Link>
-          ))}
-        </nav>
-        <div className="border-t border-marine-400/40 px-6 py-4">
-          <p className="text-xs text-marine-100">{utilisateur.email}</p>
-          <p className="text-xs font-bold text-lime">{utilisateur.role}</p>
-          <div className="mt-3">
-            <BoutonDeconnexion variante="contourClair" />
+
+        <NavigationAdmin sections={sections} />
+
+        <div className="border-t border-white/10 p-3">
+          <div className="flex items-center gap-2.5 rounded-marque px-2 py-2">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-magenta-500 text-xs font-bold text-white">
+              {initiales}
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-xs font-semibold text-white">{utilisateur.email}</p>
+              <p className="truncate text-[11px] text-marine-200">
+                {LIBELLES_ROLE[utilisateur.role] ?? utilisateur.role}
+              </p>
+            </div>
+          </div>
+          <div className="mt-1.5">
+            <BoutonDeconnexionAdmin />
           </div>
         </div>
       </aside>
-      <main className="flex-1 overflow-y-auto p-8 print:p-0">{children}</main>
+
+      <div className="flex min-w-0 flex-1 flex-col pl-60 print:pl-0">
+        <main className="flex-1 p-8 print:p-0">{children}</main>
+      </div>
     </div>
   );
 }

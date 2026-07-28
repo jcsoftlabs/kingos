@@ -2,6 +2,8 @@ import Link from "next/link";
 import { apiBackendAuthentifie } from "@/lib/auth-serveur";
 import { formaterHTG } from "@/lib/types-catalogue";
 import { BoutonPdf } from "@/components/admin/BoutonPdf";
+import { EntetePage } from "@/components/admin/EntetePage";
+import { BadgeStatut, libelleStatut } from "@/components/admin/BadgeStatut";
 
 export const metadata = { title: "Factures — Admin" };
 
@@ -31,15 +33,20 @@ export default async function PageFacturesAdmin({ searchParams }: { searchParams
 
   const { corps } = await apiBackendAuthentifie<LigneListe[]>(`/api/admin/factures?${requete.toString()}`);
   const reponse = corps as ReponseListe;
+  const factures = reponse.succes && reponse.donnees ? reponse.donnees : [];
 
   return (
-    <div>
-      <h1 className="text-2xl font-extrabold text-marine-500">Factures</h1>
+    <>
+      <EntetePage titre="Factures" description="Suivi des encaissements — PDF et reçu thermique à portée de clic." />
 
-      <div className="mt-4 flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-1.5">
         <Link
           href="/admin/factures"
-          className={`rounded-marque px-3 py-1.5 text-xs font-bold ${!params.statut ? "bg-marine-500 text-white" : "bg-white text-marine-500 border border-marine-100"}`}
+          className={`rounded-full px-3 py-1.5 text-xs font-bold transition-colors ${
+            !params.statut
+              ? "bg-marine-500 text-white"
+              : "border border-marine-100 bg-white text-marine-400 hover:border-marine-200 hover:text-marine-500"
+          }`}
         >
           Toutes
         </Link>
@@ -47,78 +54,83 @@ export default async function PageFacturesAdmin({ searchParams }: { searchParams
           <Link
             key={s}
             href={`/admin/factures?statut=${s}`}
-            className={`rounded-marque px-3 py-1.5 text-xs font-bold ${params.statut === s ? "bg-marine-500 text-white" : "bg-white text-marine-500 border border-marine-100"}`}
+            className={`rounded-full px-3 py-1.5 text-xs font-bold transition-colors ${
+              params.statut === s
+                ? "bg-marine-500 text-white"
+                : "border border-marine-100 bg-white text-marine-400 hover:border-marine-200 hover:text-marine-500"
+            }`}
           >
-            {s}
+            {libelleStatut(s)}
           </Link>
         ))}
       </div>
 
-      <div className="mt-6 overflow-x-auto rounded-marque border border-marine-100 bg-white">
-        <table className="w-full text-sm">
-          <thead className="border-b border-marine-100 bg-creme-200 text-left text-xs font-bold uppercase tracking-wide text-marine-400">
-            <tr>
-              <th className="px-4 py-3">Numéro</th>
-              <th className="px-4 py-3">Commande</th>
-              <th className="px-4 py-3">Client</th>
-              <th className="px-4 py-3">Statut</th>
-              <th className="px-4 py-3 text-right">Payé / Total</th>
-              <th className="px-4 py-3"></th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-marine-100">
-            {!reponse.succes || !reponse.donnees || reponse.donnees.length === 0 ? (
+      <div className="mt-5 overflow-hidden rounded-xl border border-marine-100 bg-white shadow-sm">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="border-b border-marine-100 bg-creme-100 text-left text-[11px] font-bold uppercase tracking-wide text-marine-400">
               <tr>
-                <td colSpan={6} className="px-4 py-8 text-center text-marine-400">
-                  Aucune facture.
-                </td>
+                <th className="px-5 py-3">Numéro</th>
+                <th className="px-5 py-3">Commande</th>
+                <th className="px-5 py-3">Client</th>
+                <th className="px-5 py-3">Statut</th>
+                <th className="px-5 py-3 text-right">Payé / Total</th>
+                <th className="px-5 py-3"></th>
               </tr>
-            ) : (
-              reponse.donnees.map((f) => (
-                <tr key={f.id}>
-                  <td className="px-4 py-3 font-bold text-marine-500">{f.numero}</td>
-                  <td className="px-4 py-3 text-marine-400">{f.commande.numero}</td>
-                  <td className="px-4 py-3 text-marine-500">
-                    {f.commande.nomContact}
-                    <div className="text-xs text-marine-400">{f.commande.emailContact}</div>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span
-                      className={`rounded-marque px-2 py-1 text-xs font-bold ${
-                        f.statut === "PAYEE" ? "bg-foret-50 text-foret-600" : "bg-creme-200 text-marine-500"
-                      }`}
-                    >
-                      {f.statut}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-right font-bold text-marine-500">
-                    {f.payeCents !== undefined && f.totalCents !== undefined
-                      ? `${formaterHTG(f.payeCents)} / ${formaterHTG(f.totalCents)}`
-                      : "—"}
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex gap-2">
-                      <BoutonPdf type="factures" numero={f.numero} />
-                      <Link
-                        href={`/admin/factures/${f.numero}/recu`}
-                        className="rounded-marque bg-marine-50 px-2.5 py-1 text-xs font-bold text-marine-500 transition-colors hover:bg-marine-100"
-                      >
-                        Reçu
-                      </Link>
-                    </div>
+            </thead>
+            <tbody className="divide-y divide-marine-100">
+              {factures.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-5 py-12 text-center text-marine-400">
+                    Aucune facture{params.statut ? " avec ce statut" : ""}.
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+              ) : (
+                factures.map((f) => (
+                  <tr key={f.id} className="transition-colors hover:bg-creme-100">
+                    <td className="px-5 py-3 font-bold text-marine-500">{f.numero}</td>
+                    <td className="px-5 py-3 text-marine-400">{f.commande.numero}</td>
+                    <td className="px-5 py-3">
+                      <div className="font-medium text-marine-500">{f.commande.nomContact}</div>
+                      <div className="text-xs text-marine-400">{f.commande.emailContact}</div>
+                    </td>
+                    <td className="px-5 py-3">
+                      <BadgeStatut statut={f.statut} />
+                    </td>
+                    <td className="px-5 py-3 text-right tabular-nums">
+                      {f.payeCents !== undefined && f.totalCents !== undefined ? (
+                        <>
+                          <div className="font-bold text-marine-500">{formaterHTG(f.totalCents)}</div>
+                          <div className="text-xs text-marine-400">payé {formaterHTG(f.payeCents)}</div>
+                        </>
+                      ) : (
+                        "—"
+                      )}
+                    </td>
+                    <td className="px-5 py-3">
+                      <div className="flex justify-end gap-2">
+                        <BoutonPdf type="factures" numero={f.numero} />
+                        <Link
+                          href={`/admin/factures/${f.numero}/recu`}
+                          className="rounded-marque bg-marine-50 px-2.5 py-1 text-xs font-bold text-marine-500 transition-colors hover:bg-marine-100"
+                        >
+                          Reçu
+                        </Link>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
 
-      {reponse.meta && (
-        <p className="mt-4 text-xs text-marine-400">
-          Page {reponse.meta.page} / {reponse.meta.pages || 1} — {reponse.meta.total} facture(s)
-        </p>
-      )}
-    </div>
+        {reponse.meta && factures.length > 0 && (
+          <div className="border-t border-marine-100 px-5 py-3 text-xs text-marine-400">
+            Page {reponse.meta.page} / {reponse.meta.pages || 1} — {reponse.meta.total} facture(s)
+          </div>
+        )}
+      </div>
+    </>
   );
 }

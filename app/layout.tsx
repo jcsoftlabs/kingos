@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { Entete } from "@/components/Entete";
-import { PiedDePage } from "@/components/PiedDePage";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
 
@@ -18,16 +16,13 @@ export const metadata: Metadata = {
   },
 };
 
+// L'en-tête et le pied de page publics vivent dans le groupe (site), pas ici :
+// le back-office et son écran de connexion ne doivent afficher aucun élément
+// du site vitrine.
 export default function LayoutRacine({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr" className={inter.variable}>
-      <body className="flex min-h-screen flex-col font-sans antialiased">
-        <Entete />
-        <main className="flex-1">{children}</main>
-        <div className="print:hidden">
-          <PiedDePage />
-        </div>
-      </body>
+      <body className="font-sans antialiased">{children}</body>
     </html>
   );
 }
