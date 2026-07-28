@@ -16,6 +16,7 @@ function ligneVide(): LigneVente {
 
 export function FormulaireVenteRapide() {
   const router = useRouter();
+  const [clientDePassage, setClientDePassage] = useState(true);
   const [nomContact, setNomContact] = useState("");
   const [telContact, setTelContact] = useState("");
   const [emailContact, setEmailContact] = useState("");
@@ -42,11 +43,11 @@ export function FormulaireVenteRapide() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          nomContact,
-          telContact,
+          nomContact: clientDePassage ? undefined : nomContact,
+          telContact: clientDePassage ? undefined : telContact,
           emailContact: emailContact || undefined,
-          typeClient,
-          entreprise: entreprise || undefined,
+          typeClient: clientDePassage ? "PARTICULIER" : typeClient,
+          entreprise: clientDePassage ? undefined : entreprise || undefined,
           lignes: lignes.map((l) => ({
             description: l.description,
             quantite: l.quantite,
@@ -73,36 +74,65 @@ export function FormulaireVenteRapide() {
     <form onSubmit={soumettre} className="max-w-2xl space-y-6">
       <div className="rounded-xl border border-marine-100 bg-white p-5 shadow-sm">
         <h2 className="text-sm font-bold text-marine-500">Client</h2>
-        <div className="mt-3 grid gap-4 sm:grid-cols-2">
-          <div>
-            <label className="block text-xs font-bold text-marine-500">Type de client</label>
-            <select value={typeClient} onChange={(e) => setTypeClient(e.target.value)} className="mt-1 w-full rounded-marque border border-marine-100 px-3 py-2 text-sm">
-              <option value="PARTICULIER">Particulier</option>
-              <option value="ENTREPRISE">Entreprise</option>
-              <option value="ONG">ONG</option>
-              <option value="INSTITUTION_ETATIQUE">Institution étatique</option>
-            </select>
-          </div>
-          {typeClient !== "PARTICULIER" && (
-            <div>
-              <label className="block text-xs font-bold text-marine-500">Raison sociale</label>
-              <input value={entreprise} onChange={(e) => setEntreprise(e.target.value)} className="mt-1 w-full rounded-marque border border-marine-100 px-3 py-2 text-sm" />
-            </div>
-          )}
-          <div>
-            <label className="block text-xs font-bold text-marine-500">Nom</label>
-            <input required value={nomContact} onChange={(e) => setNomContact(e.target.value)} className="mt-1 w-full rounded-marque border border-marine-100 px-3 py-2 text-sm" />
-          </div>
-          <div>
-            <label className="block text-xs font-bold text-marine-500">Téléphone</label>
-            <input required value={telContact} onChange={(e) => setTelContact(e.target.value)} className="mt-1 w-full rounded-marque border border-marine-100 px-3 py-2 text-sm" />
-          </div>
-          <div className="sm:col-span-2">
-            <label className="block text-xs font-bold text-marine-500">E-mail (facultatif)</label>
-            <input type="email" value={emailContact} onChange={(e) => setEmailContact(e.target.value)} className="mt-1 w-full rounded-marque border border-marine-100 px-3 py-2 text-sm" />
-            <p className="mt-1 text-xs text-marine-400">Si renseigné, la facture et la confirmation de paiement sont envoyées par e-mail.</p>
-          </div>
+
+        <div className="mt-3 flex gap-2">
+          <button
+            type="button"
+            onClick={() => setClientDePassage(true)}
+            className={`rounded-full px-4 py-1.5 text-xs font-bold transition-colors ${
+              clientDePassage ? "bg-marine-500 text-white" : "border border-marine-100 bg-white text-marine-400"
+            }`}
+          >
+            Client de passage
+          </button>
+          <button
+            type="button"
+            onClick={() => setClientDePassage(false)}
+            className={`rounded-full px-4 py-1.5 text-xs font-bold transition-colors ${
+              !clientDePassage ? "bg-marine-500 text-white" : "border border-marine-100 bg-white text-marine-400"
+            }`}
+          >
+            Client identifié
+          </button>
         </div>
+
+        {clientDePassage ? (
+          <p className="mt-3 text-xs text-marine-400">
+            Travail remis directement sur place — aucune coordonnée requise. Basculez sur « Client identifié » pour
+            un client à suivre (entreprise, reçu nominatif, e-mail de confirmation…).
+          </p>
+        ) : (
+          <div className="mt-3 grid gap-4 sm:grid-cols-2">
+            <div>
+              <label className="block text-xs font-bold text-marine-500">Type de client</label>
+              <select value={typeClient} onChange={(e) => setTypeClient(e.target.value)} className="mt-1 w-full rounded-marque border border-marine-100 px-3 py-2 text-sm">
+                <option value="PARTICULIER">Particulier</option>
+                <option value="ENTREPRISE">Entreprise</option>
+                <option value="ONG">ONG</option>
+                <option value="INSTITUTION_ETATIQUE">Institution étatique</option>
+              </select>
+            </div>
+            {typeClient !== "PARTICULIER" && (
+              <div>
+                <label className="block text-xs font-bold text-marine-500">Raison sociale</label>
+                <input value={entreprise} onChange={(e) => setEntreprise(e.target.value)} className="mt-1 w-full rounded-marque border border-marine-100 px-3 py-2 text-sm" />
+              </div>
+            )}
+            <div>
+              <label className="block text-xs font-bold text-marine-500">Nom</label>
+              <input required value={nomContact} onChange={(e) => setNomContact(e.target.value)} className="mt-1 w-full rounded-marque border border-marine-100 px-3 py-2 text-sm" />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-marine-500">Téléphone</label>
+              <input required value={telContact} onChange={(e) => setTelContact(e.target.value)} className="mt-1 w-full rounded-marque border border-marine-100 px-3 py-2 text-sm" />
+            </div>
+            <div className="sm:col-span-2">
+              <label className="block text-xs font-bold text-marine-500">E-mail (facultatif)</label>
+              <input type="email" value={emailContact} onChange={(e) => setEmailContact(e.target.value)} className="mt-1 w-full rounded-marque border border-marine-100 px-3 py-2 text-sm" />
+              <p className="mt-1 text-xs text-marine-400">Si renseigné, la facture et la confirmation de paiement sont envoyées par e-mail.</p>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="rounded-xl border border-marine-100 bg-white p-5 shadow-sm">
