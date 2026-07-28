@@ -27,7 +27,12 @@ export async function apiBackend<T>(
 
   const { revalidate, ...init } = options;
 
-  const reponse = await fetch(`${URL_API}${chemin}`, {
+  // Retire un éventuel "/" final de URL_API : sinon "https://host/" + "/api/x"
+  // produit "https://host//api/x", que le routeur Fastify du backend ne
+  // reconnaît pas (404 "Route POST://api/x not found" — vu en production).
+  const racineApi = URL_API.replace(/\/+$/, "");
+
+  const reponse = await fetch(`${racineApi}${chemin}`, {
     ...init,
     headers: {
       // Content-Type uniquement s'il y a un corps : Fastify rejette (400)
