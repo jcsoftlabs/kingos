@@ -11,6 +11,7 @@ const LIENS = [
   { href: "/admin/commandes", libelle: "Commandes" },
   { href: "/admin/devis", libelle: "Devis" },
   { href: "/admin/factures", libelle: "Factures" },
+  { href: "/admin/catalogue", libelle: "Catalogue" },
 ];
 
 export default async function LayoutAdmin({ children }: { children: React.ReactNode }) {

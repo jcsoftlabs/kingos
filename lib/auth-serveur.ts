@@ -26,9 +26,17 @@ export async function obtenirUtilisateurCourant(): Promise<UtilisateurCourant | 
 
 export const ROLES_BACK_OFFICE = ["SUPER_ADMIN", "ADMIN", "COMMERCIAL", "PRODUCTION", "LECTURE"] as const;
 
-/** Requête authentifiée vers l'API — pour les pages /admin (lecture seule pour l'instant). */
-export async function apiBackendAuthentifie<T>(chemin: string) {
+/** Requête authentifiée vers l'API — pages /admin et Route Handlers de mutation. */
+export async function apiBackendAuthentifie<T>(
+  chemin: string,
+  options: { method?: string; body?: string } = {},
+) {
   const jeton = await lireJetonSession();
   if (!jeton) return { statut: 401 as const, corps: { succes: false as const } };
-  return apiBackend<T>(chemin, { headers: { "X-Jeton-Session": jeton }, revalidate: false });
+  return apiBackend<T>(chemin, {
+    method: options.method,
+    body: options.body,
+    headers: { "X-Jeton-Session": jeton },
+    revalidate: false,
+  });
 }
