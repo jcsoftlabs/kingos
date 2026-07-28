@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Bouton } from "@/components/Bouton";
 
-export function BoutonDeconnexion() {
+export function BoutonDeconnexion({ variante = "contour" }: { variante?: "contour" | "contourClair" }) {
   const router = useRouter();
   const [enCours, setEnCours] = useState(false);
 
@@ -15,7 +15,7 @@ export function BoutonDeconnexion() {
   }
 
   return (
-    <Bouton variante="contour" taille="normal" onClick={deconnecter} disabled={enCours}>
+    <Bouton variante={variante} taille="petit" onClick={deconnecter} disabled={enCours}>
       {enCours ? "…" : "Se déconnecter"}
     </Bouton>
   );
