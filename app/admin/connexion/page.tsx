@@ -34,19 +34,12 @@ export default async function PageConnexionAdmin() {
       </div>
 
       <div className="relative w-full max-w-sm">
-        <div className="flex justify-center">
-          <Image
-            src="/logo-kingos.png"
-            alt="Kingo's"
-            width={420}
-            height={420}
-            priority
-            className="h-20 w-auto brightness-0 invert drop-shadow-lg"
-          />
-        </div>
+        <div className="rounded-2xl bg-white/95 p-8 shadow-2xl shadow-black/40 backdrop-blur">
+          <div className="flex justify-center">
+            <Image src="/logo-kingos.png" alt="Kingo's" width={420} height={420} priority className="h-14 w-auto" />
+          </div>
 
-        <div className="mt-8 rounded-2xl bg-white/95 p-8 shadow-2xl shadow-black/40 backdrop-blur">
-          <p className="text-center text-xs font-bold uppercase tracking-[0.14em] text-magenta-500">Back-office</p>
+          <p className="mt-6 text-center text-xs font-bold uppercase tracking-[0.14em] text-magenta-500">Back-office</p>
           <h1 className="mt-1 text-center text-xl font-extrabold tracking-tight text-marine-500">Espace équipe</h1>
           <p className="mt-1.5 text-center text-sm text-marine-400">Réservé au personnel Kingo&apos;s.</p>
 
