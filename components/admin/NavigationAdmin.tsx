@@ -9,6 +9,7 @@ import {
   IconeFacture,
   IconeCatalogue,
   IconeUtilisateurs,
+  IconeClients,
   IconeReglages,
 } from "@/components/icones/admin";
 
@@ -18,6 +19,7 @@ const ICONES = {
   devis: IconeDevis,
   facture: IconeFacture,
   catalogue: IconeCatalogue,
+  clients: IconeClients,
   utilisateurs: IconeUtilisateurs,
   reglages: IconeReglages,
 } as const;

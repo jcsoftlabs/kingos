@@ -74,6 +74,16 @@ export function IconeUtilisateurs(props: Props) {
   );
 }
 
+export function IconeClients(props: Props) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M4 21v-1.5A4.5 4.5 0 0 1 8.5 15h3A4.5 4.5 0 0 1 16 19.5V21" />
+      <circle cx="10" cy="8" r="4" />
+      <path d="M18.5 12.5 20 14l3-3" />
+    </svg>
+  );
+}
+
 export function IconeReglages(props: Props) {
   return (
     <svg {...base} {...props}>

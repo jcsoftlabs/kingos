@@ -25,6 +25,7 @@ const SECTIONS: Section[] = [
       { href: "/admin/commandes", libelle: "Commandes", icone: "panier" },
       { href: "/admin/devis", libelle: "Devis", icone: "devis" },
       { href: "/admin/factures", libelle: "Factures", icone: "facture" },
+      { href: "/admin/clients", libelle: "Clients", icone: "clients" },
     ],
   },
   {
