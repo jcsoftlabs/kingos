@@ -72,3 +72,22 @@ export function IconeRadar(props: Props) {
     </svg>
   );
 }
+
+export function IconeOeil(props: Props) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7Z" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  );
+}
+
+export function IconeOeilBarre(props: Props) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7Z" />
+      <circle cx="12" cy="12" r="3" />
+      <path d="M3 3l18 18" />
+    </svg>
+  );
+}

@@ -12,14 +12,19 @@ const LIENS = [
   { href: "/admin/devis", libelle: "Devis" },
   { href: "/admin/factures", libelle: "Factures" },
   { href: "/admin/catalogue", libelle: "Catalogue" },
+  { href: "/admin/utilisateurs", libelle: "Utilisateurs" },
+  { href: "/admin/parametres", libelle: "Paramètres" },
 ];
 
 export default async function LayoutAdmin({ children }: { children: React.ReactNode }) {
   const utilisateur = await obtenirUtilisateurCourant();
 
-  if (!utilisateur) redirect("/espace");
+  // Le back-office a son propre écran de connexion (/admin/connexion) —
+  // le partager avec la page client /espace créait une confusion signalée
+  // (un staff qui atterrit sur une page visiblement "compte client").
+  if (!utilisateur) redirect("/admin/connexion");
   if (!ROLES_BACK_OFFICE.includes(utilisateur.role as (typeof ROLES_BACK_OFFICE)[number])) {
-    redirect("/espace");
+    redirect("/admin/connexion");
   }
 
   return (

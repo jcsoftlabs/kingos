@@ -3,8 +3,14 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Bouton } from "@/components/Bouton";
+import { ChampMotDePasse } from "@/components/ChampMotDePasse";
 
-export function FormulaireConnexion() {
+interface Props {
+  /** Chemin vers lequel naviguer après succès. Sans valeur : router.refresh() sur place. */
+  apresConnexion?: string;
+}
+
+export function FormulaireConnexion({ apresConnexion }: Props) {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [motDePasse, setMotDePasse] = useState("");
@@ -26,7 +32,8 @@ export function FormulaireConnexion() {
         setErreur(corps.erreur?.message ?? "Connexion impossible");
         return;
       }
-      router.refresh();
+      if (apresConnexion) router.push(apresConnexion);
+      else router.refresh();
     } catch {
       setErreur("Erreur réseau — réessayez dans un instant");
     } finally {
@@ -41,21 +48,13 @@ export function FormulaireConnexion() {
         <input
           type="email"
           required
+          autoComplete="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="mt-2 w-full rounded-marque border border-marine-100 px-4 py-3 text-sm"
         />
       </div>
-      <div>
-        <label className="block text-sm font-bold text-marine-500">Mot de passe</label>
-        <input
-          type="password"
-          required
-          value={motDePasse}
-          onChange={(e) => setMotDePasse(e.target.value)}
-          className="mt-2 w-full rounded-marque border border-marine-100 px-4 py-3 text-sm"
-        />
-      </div>
+      <ChampMotDePasse value={motDePasse} onChange={setMotDePasse} required autoComplete="current-password" />
 
       {erreur && <p className="text-sm text-magenta-600">{erreur}</p>}
 

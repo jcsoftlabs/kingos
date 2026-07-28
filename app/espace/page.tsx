@@ -31,10 +31,7 @@ export default async function PageEspaceClient() {
       <section className="mx-auto max-w-md px-4 py-20 sm:px-6">
         <p className="text-sm font-bold uppercase tracking-wide text-magenta-500">Connexion</p>
         <h1 className="mt-2 text-3xl font-extrabold text-marine-500">Accédez à votre compte</h1>
-        <p className="mt-3 text-marine-400">
-          Client, ou membre de l&apos;équipe Kingo&apos;s — connectez-vous avec vos identifiants, vous serez
-          redirigé au bon endroit.
-        </p>
+        <p className="mt-3 text-marine-400">Connectez-vous avec les identifiants de votre compte client.</p>
         <div className="mt-8">
           <FormulaireConnexion />
         </div>
