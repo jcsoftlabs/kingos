@@ -5,9 +5,21 @@ import type { CategorieResume } from "@/lib/types-catalogue";
 
 export const metadata = { title: "Demander un devis" };
 
+async function chargerCategories(): Promise<CategorieResume[]> {
+  try {
+    const { corps } = await apiBackend<CategorieResume[]>("/api/catalogue/categories", { revalidate: 60 });
+    return corps.succes && corps.donnees ? corps.donnees.filter((c) => c.services.length > 0) : [];
+  } catch {
+    // L'API Railway peut être injoignable au moment précis du build Vercel
+    // (redéploiement croisé, premier déploiement avant que le backend existe...).
+    // Ne jamais faire échouer le build du site pour ça : on sert un état de
+    // repli, l'ISR réessaiera à la prochaine revalidation (60s).
+    return [];
+  }
+}
+
 export default async function PageDevis() {
-  const { corps } = await apiBackend<CategorieResume[]>("/api/catalogue/categories", { revalidate: 60 });
-  const categories = corps.succes && corps.donnees ? corps.donnees.filter((c) => c.services.length > 0) : [];
+  const categories = await chargerCategories();
 
   if (categories.length === 0) {
     return (
