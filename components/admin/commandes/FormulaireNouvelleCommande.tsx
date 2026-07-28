@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Bouton } from "@/components/Bouton";
+import { RechercheClient } from "./RechercheClient";
 
 interface Option {
   id: string;
@@ -99,7 +100,20 @@ export function FormulaireNouvelleCommande({ categories }: { categories: Categor
     <form onSubmit={soumettre} className="space-y-6">
       <div className="rounded-xl border border-marine-100 bg-white p-5 shadow-sm">
         <h2 className="text-sm font-bold text-marine-500">Client</h2>
-        <div className="mt-3 grid gap-4 sm:grid-cols-2">
+
+        <div className="mt-3">
+          <RechercheClient
+            onSelectionner={(client) => {
+              setNomContact(client.nom);
+              setEmailContact(client.email);
+              setTelContact(client.telephone);
+              setEntreprise(client.entreprise ?? "");
+              setTypeClient(client.typeClient);
+            }}
+          />
+        </div>
+
+        <div className="mt-4 grid gap-4 border-t border-marine-100 pt-4 sm:grid-cols-2">
           <div>
             <label className="block text-xs font-bold text-marine-500">Type de client</label>
             <select value={typeClient} onChange={(e) => setTypeClient(e.target.value)} className="mt-1 w-full rounded-marque border border-marine-100 px-3 py-2 text-sm">
