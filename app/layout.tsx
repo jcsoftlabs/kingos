@@ -24,7 +24,9 @@ export default function LayoutRacine({ children }: { children: React.ReactNode }
       <body className="flex min-h-screen flex-col font-sans antialiased">
         <Entete />
         <main className="flex-1">{children}</main>
-        <PiedDePage />
+        <div className="print:hidden">
+          <PiedDePage />
+        </div>
       </body>
     </html>
   );

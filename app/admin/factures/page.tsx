@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { apiBackendAuthentifie } from "@/lib/auth-serveur";
 import { formaterHTG } from "@/lib/types-catalogue";
+import { BoutonPdf } from "@/components/admin/BoutonPdf";
 
 export const metadata = { title: "Factures — Admin" };
 
@@ -62,12 +63,13 @@ export default async function PageFacturesAdmin({ searchParams }: { searchParams
               <th className="px-4 py-3">Client</th>
               <th className="px-4 py-3">Statut</th>
               <th className="px-4 py-3 text-right">Payé / Total</th>
+              <th className="px-4 py-3"></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-marine-100">
             {!reponse.succes || !reponse.donnees || reponse.donnees.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-marine-400">
+                <td colSpan={6} className="px-4 py-8 text-center text-marine-400">
                   Aucune facture.
                 </td>
               </tr>
@@ -93,6 +95,17 @@ export default async function PageFacturesAdmin({ searchParams }: { searchParams
                     {f.payeCents !== undefined && f.totalCents !== undefined
                       ? `${formaterHTG(f.payeCents)} / ${formaterHTG(f.totalCents)}`
                       : "—"}
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex gap-2">
+                      <BoutonPdf type="factures" numero={f.numero} />
+                      <Link
+                        href={`/admin/factures/${f.numero}/recu`}
+                        className="rounded-marque bg-marine-50 px-2.5 py-1 text-xs font-bold text-marine-500 transition-colors hover:bg-marine-100"
+                      >
+                        Reçu
+                      </Link>
+                    </div>
                   </td>
                 </tr>
               ))

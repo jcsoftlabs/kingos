@@ -70,3 +70,15 @@ h4 {
   background: radial-gradient(circle at 100% 100%, rgb(0 0 0 / 0.12), transparent 60%);
   pointer-events: none;
 }
+
+/* Reçu imprimante thermique (/admin/factures/[numero]/recu) — la plupart des
+   imprimantes de caisse en Haïti impriment en 80mm de large, en continu. */
+@media print {
+  @page {
+    size: 80mm auto;
+    margin: 0;
+  }
+  body {
+    background: white;
+  }
+}

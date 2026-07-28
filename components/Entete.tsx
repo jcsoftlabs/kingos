@@ -13,7 +13,7 @@ const LIENS = [
 
 export function Entete() {
   return (
-    <header className="sticky top-0 z-40 bg-marine-500">
+    <header className="sticky top-0 z-40 bg-marine-500 print:hidden">
       <div className="relative mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
         <Link href="/" className="flex items-center gap-2" aria-label="Accueil Kingo's">
           <Image

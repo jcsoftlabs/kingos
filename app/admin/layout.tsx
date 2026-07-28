@@ -23,7 +23,7 @@ export default async function LayoutAdmin({ children }: { children: React.ReactN
 
   return (
     <div className="flex min-h-screen bg-creme-100">
-      <aside className="flex w-60 flex-col bg-marine-500 text-creme-100">
+      <aside className="flex w-60 flex-col bg-marine-500 text-creme-100 print:hidden">
         <div className="flex items-center gap-2 px-6 py-5">
           <Image src="/logo-kingos.png" alt="Kingo's" width={100} height={100} className="h-8 w-auto brightness-0 invert" />
           <span className="text-xs font-bold uppercase tracking-wide text-lime">Admin</span>
@@ -47,7 +47,7 @@ export default async function LayoutAdmin({ children }: { children: React.ReactN
           </div>
         </div>
       </aside>
-      <main className="flex-1 overflow-y-auto p-8">{children}</main>
+      <main className="flex-1 overflow-y-auto p-8 print:p-0">{children}</main>
     </div>
   );
 }

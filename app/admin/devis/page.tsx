@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { apiBackendAuthentifie } from "@/lib/auth-serveur";
 import { formaterHTG } from "@/lib/types-catalogue";
+import { BoutonPdf } from "@/components/admin/BoutonPdf";
 
 export const metadata = { title: "Devis — Admin" };
 
@@ -63,12 +64,13 @@ export default async function PageDevisAdmin({ searchParams }: { searchParams: P
               <th className="px-4 py-3">Statut</th>
               <th className="px-4 py-3 text-right">Total</th>
               <th className="px-4 py-3">Expire le</th>
+              <th className="px-4 py-3"></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-marine-100">
             {!reponse.succes || !reponse.donnees || reponse.donnees.length === 0 ? (
               <tr>
-                <td colSpan={6} className="px-4 py-8 text-center text-marine-400">
+                <td colSpan={7} className="px-4 py-8 text-center text-marine-400">
                   Aucun devis.
                 </td>
               </tr>
@@ -88,6 +90,9 @@ export default async function PageDevisAdmin({ searchParams }: { searchParams: P
                     {d.totalCents !== undefined ? formaterHTG(d.totalCents) : "—"}
                   </td>
                   <td className="px-4 py-3 text-marine-400">{new Date(d.expireLe).toLocaleDateString("fr-HT")}</td>
+                  <td className="px-4 py-3">
+                    <BoutonPdf type="devis" numero={d.numero} />
+                  </td>
                 </tr>
               ))
             )}
