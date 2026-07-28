@@ -26,6 +26,15 @@ body {
   color: var(--couleur-texte);
 }
 
+h1,
+h2,
+h3,
+h4 {
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -46,4 +55,18 @@ body {
     theme("colors.cyan.DEFAULT") 60%,
     theme("colors.magenta.DEFAULT") 100%
   );
+}
+
+.tuile-service {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.tuile-service::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 100% 100%, rgb(0 0 0 / 0.12), transparent 60%);
+  pointer-events: none;
 }

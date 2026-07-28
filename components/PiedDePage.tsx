@@ -17,7 +17,7 @@ export function PiedDePage() {
         </div>
 
         <div>
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-lime-DEFAULT">Services</h3>
+          <h3 className="text-sm font-extrabold uppercase tracking-wide text-lime">Services</h3>
           <ul className="mt-3 space-y-2 text-sm">
             <li><Link href="/services/impression-grand-format" className="hover:text-magenta-300">Impression grand format</Link></li>
             <li><Link href="/services/impression-textile" className="hover:text-magenta-300">Impression textile</Link></li>
@@ -26,7 +26,7 @@ export function PiedDePage() {
         </div>
 
         <div>
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-lime-DEFAULT">Kingo's</h3>
+          <h3 className="text-sm font-extrabold uppercase tracking-wide text-lime">Kingo's</h3>
           <ul className="mt-3 space-y-2 text-sm">
             <li><Link href="/realisations" className="hover:text-magenta-300">Réalisations</Link></li>
             <li><Link href="/ressources" className="hover:text-magenta-300">Ressources graphiques</Link></li>
@@ -36,7 +36,7 @@ export function PiedDePage() {
         </div>
 
         <div>
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-lime-DEFAULT">Légal</h3>
+          <h3 className="text-sm font-extrabold uppercase tracking-wide text-lime">Légal</h3>
           <ul className="mt-3 space-y-2 text-sm">
             <li><Link href="/mentions-legales" className="hover:text-magenta-300">Mentions légales</Link></li>
             <li><Link href="/conditions-generales" className="hover:text-magenta-300">Conditions générales</Link></li>
