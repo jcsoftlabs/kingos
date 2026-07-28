@@ -44,7 +44,7 @@ export function MenuMobile() {
                 <Link
                   href={lien.href}
                   onClick={() => setOuvert(false)}
-                  className="block rounded-marque px-2 py-3 text-base font-bold text-creme-100 hover:bg-marine-600 hover:text-lime"
+                  className="block rounded-marque px-2 py-3 text-base font-bold text-creme-100 hover:bg-marine-600 hover:text-magenta-300"
                 >
                   {lien.libelle}
                 </Link>

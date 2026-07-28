@@ -31,7 +31,7 @@ export function Entete() {
             <Link
               key={lien.href}
               href={lien.href}
-              className="text-sm font-bold text-creme-100 transition-colors hover:text-lime"
+              className="text-sm font-bold text-creme-100 transition-colors hover:text-magenta-300"
             >
               {lien.libelle}
             </Link>
@@ -41,7 +41,7 @@ export function Entete() {
         <div className="flex items-center gap-4">
           <Link
             href="/espace"
-            className="hidden text-sm font-bold text-creme-100 hover:text-lime sm:block"
+            className="hidden text-sm font-bold text-creme-100 hover:text-magenta-300 sm:block"
           >
             Espace client
           </Link>

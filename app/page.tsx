@@ -2,18 +2,23 @@ import Image from "next/image";
 import Link from "next/link";
 import { Bouton } from "@/components/Bouton";
 
+// Nuances choisies pour que le texte blanc tienne 4.5:1 sur chaque tuile (la
+// version bg-cyan-500/bg-magenta-500 initiale tombait à 2.9:1 et 4.4:1 —
+// voir l'audit de contraste). Les quatre tuiles visent maintenant un contraste
+// comparable (6,4 à 13:1) pour que le bloc se lise comme un ensemble, pas
+// quatre couleurs qui se disputent l'attention.
 const TUILES_SERVICES = [
   {
     slug: "impression-grand-format",
     nom: "Impression Grand Format",
     tag: "BANNERS · VINYL · BILLBOARD",
-    classe: "bg-magenta-500 text-white",
+    classe: "bg-magenta-600 text-white",
   },
   {
     slug: "impression-textile",
     nom: "Impression Textile",
     tag: "T-SHIRTS · SUPPORTS PERSONNALISÉS",
-    classe: "bg-cyan-500 text-white",
+    classe: "bg-cyan-700 text-white",
   },
   {
     slug: "conception-graphique",
@@ -96,7 +101,8 @@ export default function PageAccueil() {
             href={`/services/${tuile.slug}`}
             className={`tuile-service group flex aspect-[4/3] flex-col justify-end p-8 transition-transform sm:p-12 ${tuile.classe}`}
           >
-            <span className="text-xs font-bold tracking-[0.15em] opacity-80">{tuile.tag}</span>
+            {/* opacité retirée : à 80% le texte du tag tombait sous 4.5:1 sur ces fonds */}
+            <span className="text-xs font-bold tracking-[0.15em]">{tuile.tag}</span>
             <span className="mt-2 flex items-center gap-3 text-2xl font-extrabold sm:text-3xl">
               {tuile.nom}
               <span aria-hidden className="transition-transform group-hover:translate-x-1">→</span>

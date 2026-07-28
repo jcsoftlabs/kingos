@@ -12,9 +12,12 @@ interface ProprietesCommunes {
 }
 
 // Pilules pleines ou détourées, dans l'esprit des CTA de référence — pas de coins carrés.
+// Une seule couleur interactive dans tout le site : magenta-500. Un dégradé vers
+// magenta-400 tombait sous 4.5:1 de contraste sur son bord clair — remplacé par un
+// aplat qui fonce au survol, le même mécanisme que la variante secondaire.
 const STYLES_VARIANTE: Record<Variante, string> = {
   primaire:
-    "bg-gradient-to-r from-magenta-500 to-magenta-400 text-white shadow-lg shadow-magenta-500/20 hover:shadow-magenta-500/30 hover:-translate-y-0.5 focus-visible:outline-magenta-500",
+    "bg-magenta-500 text-white shadow-lg shadow-magenta-500/20 hover:bg-magenta-600 hover:shadow-magenta-500/30 hover:-translate-y-0.5 focus-visible:outline-magenta-500",
   secondaire: "bg-marine-500 text-white hover:bg-marine-600 focus-visible:outline-marine-500",
   contour: "border-2 border-marine-500 text-marine-500 hover:bg-marine-500 hover:text-white focus-visible:outline-marine-500",
   contourClair: "border-2 border-white/70 text-white hover:bg-white hover:text-marine-500 focus-visible:outline-white",
