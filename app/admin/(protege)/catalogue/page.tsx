@@ -1,9 +1,8 @@
 import { apiBackendAuthentifie } from "@/lib/auth-serveur";
-import { formaterHTG } from "@/lib/types-catalogue";
 import { FormulaireNouvelleCategorie } from "@/components/admin/catalogue/FormulaireNouvelleCategorie";
 import { FormulaireNouveauService } from "@/components/admin/catalogue/FormulaireNouveauService";
-import { BoutonVisibilite } from "@/components/admin/catalogue/BoutonVisibilite";
-import { GestionAttributs } from "@/components/admin/catalogue/GestionAttributs";
+import { GestionCategorie } from "@/components/admin/catalogue/GestionCategorie";
+import { LigneService } from "@/components/admin/catalogue/LigneService";
 import { EntetePage } from "@/components/admin/EntetePage";
 
 export const metadata = { title: "Catalogue — Admin" };
@@ -27,9 +26,12 @@ interface Service {
   id: string;
   slug: string;
   nom: string;
+  resume: string;
+  description: string;
   mode: string;
   prixBaseCents: string;
   unite: string | null;
+  delaiJours: number;
   visible: boolean;
   attributs: Attribut[];
 }
@@ -64,7 +66,7 @@ export default async function PageCatalogueAdmin() {
         ) : (
           categories.map((categorie) => (
             <div key={categorie.id}>
-              <h2 className="text-sm font-extrabold uppercase tracking-wide text-marine-400">{categorie.nom}</h2>
+              <GestionCategorie categorieId={categorie.id} nom={categorie.nom} nbServices={categorie.services.length} />
               <div className="mt-2 overflow-hidden rounded-xl border border-marine-100 bg-white shadow-sm">
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
@@ -85,25 +87,7 @@ export default async function PageCatalogueAdmin() {
                           </td>
                         </tr>
                       ) : (
-                        categorie.services.map((service) => (
-                          <tr key={service.id} className="transition-colors hover:bg-creme-100">
-                            <td className="px-5 py-3 font-bold text-marine-500">
-                              {service.nom}
-                              <div className="text-xs font-normal text-marine-400">{service.slug}</div>
-                            </td>
-                            <td className="px-5 py-3 text-marine-400">{service.mode}</td>
-                            <td className="px-5 py-3">
-                              <GestionAttributs serviceId={service.id} attributs={service.attributs} />
-                            </td>
-                            <td className="px-5 py-3 text-right font-bold tabular-nums text-marine-500">
-                              {formaterHTG(service.prixBaseCents)}
-                              {service.unite && <span className="font-normal text-marine-400"> / {service.unite}</span>}
-                            </td>
-                            <td className="px-5 py-3 text-right">
-                              <BoutonVisibilite serviceId={service.id} visible={service.visible} />
-                            </td>
-                          </tr>
-                        ))
+                        categorie.services.map((service) => <LigneService key={service.id} service={service} />)
                       )}
                     </tbody>
                   </table>

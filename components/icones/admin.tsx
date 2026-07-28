@@ -120,6 +120,37 @@ export function IconeAlerte(props: Props) {
   );
 }
 
+export function IconeCheque(props: Props) {
+  return (
+    <svg {...base} {...props}>
+      <rect x="2" y="6" width="20" height="13" rx="2" />
+      <path d="M2 10h20" />
+      <path d="M6 15h5" />
+      <circle cx="17" cy="15" r="2" />
+    </svg>
+  );
+}
+
+export function IconeRealisations(props: Props) {
+  return (
+    <svg {...base} {...props}>
+      <rect x="3" y="3" width="18" height="14" rx="2" />
+      <path d="m3 14 5-5 4 4 5-6 4 4" />
+      <circle cx="8" cy="8" r="1.5" />
+    </svg>
+  );
+}
+
+export function IconeRessources(props: Props) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M6 2h9l4 4v16H6z" />
+      <path d="M15 2v4h4" />
+      <path d="M9 17V9l3 2 3-2v8" />
+    </svg>
+  );
+}
+
 export function IconeJournal(props: Props) {
   return (
     <svg {...base} {...props}>

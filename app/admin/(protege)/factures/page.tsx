@@ -37,7 +37,22 @@ export default async function PageFacturesAdmin({ searchParams }: { searchParams
 
   return (
     <>
-      <EntetePage titre="Factures" description="Suivi des encaissements — PDF et reçu thermique à portée de clic." />
+      <EntetePage titre="Factures" description="Suivi des encaissements — PDF et reçu thermique à portée de clic.">
+        <div className="flex gap-2">
+          <a
+            href="/api/admin/exports/factures"
+            className="rounded-full border border-marine-100 bg-white px-4 py-2 text-xs font-bold text-marine-500 transition-colors hover:border-marine-200"
+          >
+            Exporter factures (CSV)
+          </a>
+          <a
+            href="/api/admin/exports/paiements"
+            className="rounded-full border border-marine-100 bg-white px-4 py-2 text-xs font-bold text-marine-500 transition-colors hover:border-marine-200"
+          >
+            Exporter paiements (CSV)
+          </a>
+        </div>
+      </EntetePage>
 
       <div className="flex flex-wrap gap-1.5">
         <Link

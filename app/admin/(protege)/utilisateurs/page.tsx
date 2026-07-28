@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { apiBackendAuthentifie, obtenirUtilisateurCourant } from "@/lib/auth-serveur";
 import { FormulaireNouvelUtilisateur } from "@/components/admin/utilisateurs/FormulaireNouvelUtilisateur";
-import { BoutonActivation } from "@/components/admin/utilisateurs/BoutonActivation";
+import { GestionCompte } from "@/components/admin/utilisateurs/GestionCompte";
 import { EntetePage } from "@/components/admin/EntetePage";
 
 export const metadata = { title: "Utilisateurs — Admin" };
@@ -81,7 +81,7 @@ export default async function PageUtilisateursAdmin() {
                       </span>
                     </td>
                     <td className="px-5 py-3 text-right">
-                      {u.role !== "SUPER_ADMIN" && <BoutonActivation utilisateurId={u.id} actif={u.actif} />}
+                      {u.role !== "SUPER_ADMIN" && <GestionCompte utilisateurId={u.id} role={u.role} actif={u.actif} />}
                     </td>
                   </tr>
                 ))

@@ -4,6 +4,7 @@ import { apiBackendAuthentifie } from "@/lib/auth-serveur";
 import { formaterHTG } from "@/lib/types-catalogue";
 import { EntetePage } from "@/components/admin/EntetePage";
 import { BadgeStatut } from "@/components/admin/BadgeStatut";
+import { FormulaireCoordonneesClient } from "@/components/admin/clients/FormulaireCoordonneesClient";
 
 const LIBELLES_TYPE_CLIENT: Record<string, string> = {
   PARTICULIER: "Particulier",
@@ -70,40 +71,15 @@ export default async function PageFicheClient({ params }: { params: Promise<{ em
       </EntetePage>
 
       <div className="grid gap-5 lg:grid-cols-3">
-        <div className="rounded-xl border border-marine-100 bg-white p-5 shadow-sm">
-          <h2 className="text-sm font-bold text-marine-500">Coordonnées</h2>
-          <dl className="mt-3 space-y-2 text-sm">
-            <div>
-              <dt className="text-xs text-marine-400">E-mail</dt>
-              <dd className="font-medium text-marine-500">{client.email}</dd>
-            </div>
-            <div>
-              <dt className="text-xs text-marine-400">Téléphone</dt>
-              <dd className="font-medium text-marine-500">{client.telephone || "—"}</dd>
-            </div>
-            <div>
-              <dt className="text-xs text-marine-400">Adresse de livraison</dt>
-              <dd className="font-medium text-marine-500">{client.adresseLivraison || "—"}</dd>
-            </div>
-            <div>
-              <dt className="text-xs text-marine-400">Compte en ligne</dt>
-              <dd className="font-medium text-marine-500">
-                {client.compte ? (
-                  <>
-                    Oui — créé le {new Date(client.compte.creeLe).toLocaleDateString("fr-HT")}
-                    <div className="text-xs font-normal text-marine-400">
-                      {client.compte.derniereConnexion
-                        ? `dernière connexion ${new Date(client.compte.derniereConnexion).toLocaleDateString("fr-HT")}`
-                        : "jamais connecté"}
-                    </div>
-                  </>
-                ) : (
-                  <span className="text-marine-400">Non — commandes passées sans inscription</span>
-                )}
-              </dd>
-            </div>
-          </dl>
-        </div>
+        <FormulaireCoordonneesClient
+          email={client.email}
+          nom={client.nom}
+          entreprise={client.entreprise}
+          typeClient={client.typeClient}
+          telephone={client.telephone}
+          adresseLivraison={client.adresseLivraison}
+          compte={client.compte}
+        />
 
         <div className="grid gap-4 sm:grid-cols-2 lg:col-span-2">
           <Stat libelle="Commandes" valeur={String(stats.nbCommandes)} />

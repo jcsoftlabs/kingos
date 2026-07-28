@@ -40,3 +40,27 @@ export async function apiBackendAuthentifie<T>(
     revalidate: false,
   });
 }
+
+/**
+ * Requête authentifiée qui renvoie la Response brute plutôt que du JSON —
+ * pour les routes qui streament un fichier (export CSV) au lieu du format
+ * { succes, donnees } habituel. apiBackend() fait toujours .json(), ce qui
+ * casserait sur un flux CSV.
+ */
+export async function apiBackendFluxAuthentifie(chemin: string): Promise<Response | null> {
+  const jeton = await lireJetonSession();
+  if (!jeton) return null;
+
+  const URL_API = process.env.URL_API;
+  const JETON_SERVICE = process.env.JETON_SERVICE;
+  if (!URL_API) throw new Error("URL_API manquant dans l'environnement");
+  const racineApi = URL_API.replace(/\/+$/, "");
+
+  return fetch(`${racineApi}${chemin}`, {
+    headers: {
+      "X-Jeton-Session": jeton,
+      ...(JETON_SERVICE ? { "X-Jeton-Service": JETON_SERVICE } : {}),
+    },
+    cache: "no-store",
+  });
+}

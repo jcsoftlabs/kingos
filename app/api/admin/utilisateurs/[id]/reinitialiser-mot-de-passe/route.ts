@@ -1,0 +1,11 @@
+import { NextResponse } from "next/server";
+import { apiBackendAuthentifie } from "@/lib/auth-serveur";
+
+export async function POST(_requete: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const { statut, corps } = await apiBackendAuthentifie(`/api/admin/utilisateurs/${id}/reinitialiser-mot-de-passe`, {
+    method: "POST",
+    body: "{}",
+  });
+  return NextResponse.json(corps, { status: statut });
+}

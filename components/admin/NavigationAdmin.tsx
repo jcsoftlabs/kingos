@@ -12,6 +12,9 @@ import {
   IconeClients,
   IconeReglages,
   IconeJournal,
+  IconeCheque,
+  IconeRealisations,
+  IconeRessources,
 } from "@/components/icones/admin";
 import { IconeEclair } from "@/components/icones";
 
@@ -26,6 +29,9 @@ const ICONES = {
   reglages: IconeReglages,
   journal: IconeJournal,
   eclair: IconeEclair,
+  cheque: IconeCheque,
+  realisations: IconeRealisations,
+  ressources: IconeRessources,
 } as const;
 
 export interface Section {
