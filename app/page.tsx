@@ -1,6 +1,20 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Bouton } from "@/components/Bouton";
+import { IllustrationBanniere } from "@/components/illustrations/IllustrationBanniere";
+import { IllustrationTshirt } from "@/components/illustrations/IllustrationTshirt";
+import { IllustrationCrayon } from "@/components/illustrations/IllustrationCrayon";
+import { IllustrationDossier } from "@/components/illustrations/IllustrationDossier";
+import { IllustrationOrbite } from "@/components/illustrations/IllustrationOrbite";
+import { MotifPoints } from "@/components/illustrations/MotifPoints";
+import {
+  IconeEclair,
+  IconeCurseur,
+  IconeTelephone,
+  IconeDocument,
+  IconeTelechargement,
+  IconeRadar,
+} from "@/components/icones";
 
 // Nuances choisies pour que le texte blanc tienne 4.5:1 sur chaque tuile (la
 // version bg-cyan-500/bg-magenta-500 initiale tombait à 2.9:1 et 4.4:1 —
@@ -13,24 +27,28 @@ const TUILES_SERVICES = [
     nom: "Impression Grand Format",
     tag: "BANNERS · VINYL · BILLBOARD",
     classe: "bg-magenta-600 text-white",
+    Illustration: IllustrationBanniere,
   },
   {
     slug: "impression-textile",
     nom: "Impression Textile",
     tag: "T-SHIRTS · SUPPORTS PERSONNALISÉS",
     classe: "bg-cyan-700 text-white",
+    Illustration: IllustrationTshirt,
   },
   {
     slug: "conception-graphique",
     nom: "Conception Graphique",
     tag: "IDENTITÉ VISUELLE · LOGO",
     classe: "bg-foret-500 text-white",
+    Illustration: IllustrationCrayon,
   },
   {
     slug: "ressources",
     nom: "Ressources Graphiques",
     tag: "GRATUIT · TÉLÉCHARGEABLE",
     classe: "bg-lime text-marine-500",
+    Illustration: IllustrationDossier,
   },
 ];
 
@@ -39,31 +57,37 @@ const CE_QUON_FAIT = [
     titre: "Devis instantané",
     texte:
       "Configurez dimensions, matériaux et quantités : le prix s'affiche en direct, sans attendre un aller-retour par e-mail.",
+    Icone: IconeEclair,
   },
   {
     titre: "Commande en ligne",
     texte:
       "Téléversez vos fichiers, suivez la production en temps réel, recevez vos confirmations automatiquement.",
+    Icone: IconeCurseur,
   },
   {
     titre: "Paiement local",
     texte:
       "MonCash, carte, virement, chèque ou espèces à l'atelier — vous payez comme ça vous arrange.",
+    Icone: IconeTelephone,
   },
   {
     titre: "Facturation automatique",
     texte:
       "Devis converti en facture officielle en un clic, avec vos coordonnées bancaires et votre adresse.",
+    Icone: IconeDocument,
   },
   {
     titre: "Ressources gratuites",
     texte:
       "Logos vectorisés, fichiers PSD, templates — un espace ouvert à toute la communauté graphique haïtienne.",
+    Icone: IconeTelechargement,
   },
   {
     titre: "Suivi en temps réel",
     texte:
       "De la commande à la livraison, vous savez toujours où en est votre projet, sans avoir à demander.",
+    Icone: IconeRadar,
   },
 ];
 
@@ -71,8 +95,9 @@ export default function PageAccueil() {
   return (
     <>
       {/* HERO — plein écran sombre, typographie surdimensionnée */}
-      <section className="bg-marine-500 pb-20 pt-16 sm:pb-28 sm:pt-24">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6">
+      <section className="relative overflow-hidden bg-marine-500 pb-20 pt-16 sm:pb-28 sm:pt-24">
+        <MotifPoints className="text-white/[0.06]" />
+        <div className="relative mx-auto max-w-5xl px-4 sm:px-6">
           <p className="mb-4 text-sm font-bold uppercase tracking-[0.2em] text-lime">
             Print your natural like a reality
           </p>
@@ -93,17 +118,17 @@ export default function PageAccueil() {
         </div>
       </section>
 
-      {/* GRILLE DE SERVICES — tuiles plein bord, colorées, façon portfolio */}
+      {/* GRILLE DE SERVICES — tuiles plein bord, colorées, avec mockup illustré */}
       <section className="grid sm:grid-cols-2">
         {TUILES_SERVICES.map((tuile) => (
           <Link
             key={tuile.slug}
             href={`/services/${tuile.slug}`}
-            className={`tuile-service group flex aspect-[4/3] flex-col justify-end p-8 transition-transform sm:p-12 ${tuile.classe}`}
+            className={`tuile-service group relative flex aspect-[4/3] flex-col justify-end overflow-hidden p-8 transition-transform sm:p-12 ${tuile.classe}`}
           >
-            {/* opacité retirée : à 80% le texte du tag tombait sous 4.5:1 sur ces fonds */}
-            <span className="text-xs font-bold tracking-[0.15em]">{tuile.tag}</span>
-            <span className="mt-2 flex items-center gap-3 text-2xl font-extrabold sm:text-3xl">
+            <tuile.Illustration />
+            <span className="relative text-xs font-bold tracking-[0.15em]">{tuile.tag}</span>
+            <span className="relative mt-2 flex items-center gap-3 text-2xl font-extrabold sm:text-3xl">
               {tuile.nom}
               <span aria-hidden className="transition-transform group-hover:translate-x-1">→</span>
             </span>
@@ -112,21 +137,24 @@ export default function PageAccueil() {
       </section>
 
       {/* BANDE CTA SOMBRE */}
-      <section className="bg-marine-500 py-16 text-center">
-        <h2 className="text-2xl font-extrabold text-white sm:text-3xl">
-          Envie de voir ce qu&apos;on a déjà réalisé ?
-        </h2>
-        <div className="mt-6">
-          <Bouton href="/realisations" variante="contourClair" taille="grand">
-            Voir le portfolio
-          </Bouton>
+      <section className="relative overflow-hidden bg-marine-500 py-16 text-center">
+        <MotifPoints className="text-white/[0.06]" />
+        <div className="relative">
+          <h2 className="text-2xl font-extrabold text-white sm:text-3xl">
+            Envie de voir ce qu&apos;on a déjà réalisé ?
+          </h2>
+          <div className="mt-6">
+            <Bouton href="/realisations" variante="contourClair" taille="grand">
+              Voir le portfolio
+            </Bouton>
+          </div>
         </div>
       </section>
 
-      {/* GROS VISUEL DE MARQUE */}
+      {/* GROS VISUEL DE MARQUE — anneaux du globe en grand format, plus vivant qu'un simple cadre */}
       <section className="mx-auto max-w-4xl px-4 py-20 sm:px-6">
-        <div className="degrade-globe relative mx-auto flex aspect-[16/10] max-w-3xl items-center justify-center overflow-hidden rounded-[3rem] shadow-2xl">
-          <div className="absolute inset-0 bg-marine-500/85" />
+        <div className="relative mx-auto flex aspect-[16/10] max-w-3xl items-center justify-center overflow-hidden rounded-[3rem] bg-marine-500 shadow-2xl">
+          <IllustrationOrbite />
           <Image
             src="/logo-kingos.png"
             alt="Kingo's"
@@ -142,13 +170,15 @@ export default function PageAccueil() {
         </p>
       </section>
 
-      {/* CE QU'ON FAIT — grille 3 colonnes */}
+      {/* CE QU'ON FAIT — grille 3 colonnes, icônes plutôt que simples barres */}
       <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
         <h2 className="text-3xl font-extrabold text-marine-500 sm:text-4xl">Ce qu&apos;on fait</h2>
         <div className="mt-10 grid gap-x-10 gap-y-12 sm:grid-cols-2 md:grid-cols-3">
           {CE_QUON_FAIT.map((item) => (
             <div key={item.titre}>
-              <div className="mb-4 h-1.5 w-10 rounded-full bg-magenta-500" />
+              <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-marque bg-magenta-50 text-magenta-500">
+                <item.Icone className="h-6 w-6" />
+              </div>
               <h3 className="text-lg font-extrabold text-marine-500">{item.titre}</h3>
               <p className="mt-2 text-sm leading-relaxed text-marine-400">{item.texte}</p>
             </div>
@@ -157,8 +187,9 @@ export default function PageAccueil() {
       </section>
 
       {/* BANDE SOMBRE — déclaration + argumentaire */}
-      <section className="bg-marine-500 py-20 text-creme-100">
-        <div className="mx-auto grid max-w-6xl gap-10 px-4 sm:px-6 md:grid-cols-2 md:gap-16">
+      <section className="relative overflow-hidden bg-marine-500 py-20 text-creme-100">
+        <MotifPoints className="text-white/[0.06]" />
+        <div className="relative mx-auto grid max-w-6xl gap-10 px-4 sm:px-6 md:grid-cols-2 md:gap-16">
           <h2 className="text-3xl font-extrabold text-white sm:text-4xl">
             Construisez votre image, développez votre activité.
           </h2>
