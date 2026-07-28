@@ -120,6 +120,15 @@ export function IconeAlerte(props: Props) {
   );
 }
 
+export function IconeJournal(props: Props) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M6 2h12v20H6z" />
+      <path d="M9 7h6M9 11h6M9 15h4" />
+    </svg>
+  );
+}
+
 export function IconeDeconnexion(props: Props) {
   return (
     <svg {...base} {...props}>

@@ -89,7 +89,11 @@ export default async function PageFacturesAdmin({ searchParams }: { searchParams
                 factures.map((f) => (
                   <tr key={f.id} className="transition-colors hover:bg-creme-100">
                     <td className="px-5 py-3 font-bold text-marine-500">{f.numero}</td>
-                    <td className="px-5 py-3 text-marine-400">{f.commande.numero}</td>
+                    <td className="px-5 py-3 text-marine-400">
+                      <Link href={`/admin/commandes/${f.commande.numero}`} className="hover:text-magenta-500 hover:underline">
+                        {f.commande.numero}
+                      </Link>
+                    </td>
                     <td className="px-5 py-3">
                       <div className="font-medium text-marine-500">{f.commande.nomContact}</div>
                       <div className="text-xs text-marine-400">{f.commande.emailContact}</div>

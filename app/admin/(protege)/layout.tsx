@@ -22,6 +22,7 @@ const SECTIONS: Section[] = [
   {
     titre: "Activité",
     liens: [
+      { href: "/admin/ventes-rapides", libelle: "Vente rapide", icone: "eclair" },
       { href: "/admin/commandes", libelle: "Commandes", icone: "panier" },
       { href: "/admin/devis", libelle: "Devis", icone: "devis" },
       { href: "/admin/factures", libelle: "Factures", icone: "facture" },
@@ -34,6 +35,7 @@ const SECTIONS: Section[] = [
       { href: "/admin/catalogue", libelle: "Catalogue", icone: "catalogue" },
       { href: "/admin/utilisateurs", libelle: "Utilisateurs", icone: "utilisateurs" },
       { href: "/admin/parametres", libelle: "Paramètres", icone: "reglages" },
+      { href: "/admin/journal", libelle: "Journal d'audit", icone: "journal" },
     ],
   },
 ];
@@ -49,10 +51,11 @@ export default async function LayoutAdmin({ children }: { children: React.ReactN
     redirect("/admin/connexion");
   }
 
-  // La gestion des comptes staff est réservée au SUPER_ADMIN (voir /admin/utilisateurs).
+  // Gestion des comptes staff et journal d'audit : réservés au SUPER_ADMIN.
+  const LIENS_SUPER_ADMIN = ["/admin/utilisateurs", "/admin/journal"];
   const sections = SECTIONS.map((section) => ({
     ...section,
-    liens: section.liens.filter((l) => l.href !== "/admin/utilisateurs" || utilisateur.role === "SUPER_ADMIN"),
+    liens: section.liens.filter((l) => !LIENS_SUPER_ADMIN.includes(l.href) || utilisateur.role === "SUPER_ADMIN"),
   })).filter((section) => section.liens.length > 0);
 
   const initiales = `${utilisateur.prenom?.[0] ?? ""}${utilisateur.nom[0] ?? ""}`.toUpperCase() || "K";

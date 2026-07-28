@@ -3,10 +3,26 @@ import { formaterHTG } from "@/lib/types-catalogue";
 import { FormulaireNouvelleCategorie } from "@/components/admin/catalogue/FormulaireNouvelleCategorie";
 import { FormulaireNouveauService } from "@/components/admin/catalogue/FormulaireNouveauService";
 import { BoutonVisibilite } from "@/components/admin/catalogue/BoutonVisibilite";
+import { GestionAttributs } from "@/components/admin/catalogue/GestionAttributs";
 import { EntetePage } from "@/components/admin/EntetePage";
 
 export const metadata = { title: "Catalogue — Admin" };
 
+interface Option {
+  id: string;
+  valeur: string;
+  libelle: string;
+  coefficient: string | null;
+  supplementCents: string | null;
+}
+interface Attribut {
+  id: string;
+  cle: string;
+  libelle: string;
+  type: string;
+  obligatoire: boolean;
+  options: Option[];
+}
 interface Service {
   id: string;
   slug: string;
@@ -15,7 +31,7 @@ interface Service {
   prixBaseCents: string;
   unite: string | null;
   visible: boolean;
-  attributs: { id: string }[];
+  attributs: Attribut[];
 }
 
 interface Categorie {
@@ -76,7 +92,9 @@ export default async function PageCatalogueAdmin() {
                               <div className="text-xs font-normal text-marine-400">{service.slug}</div>
                             </td>
                             <td className="px-5 py-3 text-marine-400">{service.mode}</td>
-                            <td className="px-5 py-3 text-marine-400">{service.attributs.length}</td>
+                            <td className="px-5 py-3">
+                              <GestionAttributs serviceId={service.id} attributs={service.attributs} />
+                            </td>
                             <td className="px-5 py-3 text-right font-bold tabular-nums text-marine-500">
                               {formaterHTG(service.prixBaseCents)}
                               {service.unite && <span className="font-normal text-marine-400"> / {service.unite}</span>}

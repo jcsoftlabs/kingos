@@ -11,7 +11,9 @@ import {
   IconeUtilisateurs,
   IconeClients,
   IconeReglages,
+  IconeJournal,
 } from "@/components/icones/admin";
+import { IconeEclair } from "@/components/icones";
 
 const ICONES = {
   tableau: IconeTableauDeBord,
@@ -22,6 +24,8 @@ const ICONES = {
   clients: IconeClients,
   utilisateurs: IconeUtilisateurs,
   reglages: IconeReglages,
+  journal: IconeJournal,
+  eclair: IconeEclair,
 } as const;
 
 export interface Section {

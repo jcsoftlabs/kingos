@@ -5,10 +5,18 @@ import { formaterHTG } from "@/lib/types-catalogue";
 import { EntetePage } from "@/components/admin/EntetePage";
 import { BadgeStatut } from "@/components/admin/BadgeStatut";
 
+const LIBELLES_TYPE_CLIENT: Record<string, string> = {
+  PARTICULIER: "Particulier",
+  ENTREPRISE: "Entreprise",
+  ONG: "ONG",
+  INSTITUTION_ETATIQUE: "Institution étatique",
+};
+
 interface FicheClient {
   email: string;
   nom: string;
   entreprise: string | null;
+  typeClient: string;
   telephone: string;
   adresseLivraison: string | null;
   compte: { id: string; email: string; creeLe: string; derniereConnexion: string | null } | null;
@@ -55,7 +63,11 @@ export default async function PageFicheClient({ params }: { params: Promise<{ em
       <EntetePage
         titre={client.entreprise || client.nom}
         description={client.entreprise ? `Contact : ${client.nom}` : undefined}
-      />
+      >
+        <span className="inline-flex rounded-full bg-cyan-50 px-3 py-1 text-xs font-bold text-cyan-700">
+          {LIBELLES_TYPE_CLIENT[client.typeClient] ?? client.typeClient}
+        </span>
+      </EntetePage>
 
       <div className="grid gap-5 lg:grid-cols-3">
         <div className="rounded-xl border border-marine-100 bg-white p-5 shadow-sm">
@@ -141,7 +153,11 @@ export default async function PageFicheClient({ params }: { params: Promise<{ em
             <tbody className="divide-y divide-marine-100">
               {client.commandes.map((c) => (
                 <tr key={c.id} className="transition-colors hover:bg-creme-100">
-                  <td className="px-5 py-3 font-bold text-marine-500">{c.numero}</td>
+                  <td className="px-5 py-3 font-bold text-marine-500">
+                    <Link href={`/admin/commandes/${c.numero}`} className="hover:text-magenta-500 hover:underline">
+                      {c.numero}
+                    </Link>
+                  </td>
                   <td className="px-5 py-3 text-marine-400">{c.lignes[0]?.serviceNom ?? "—"}</td>
                   <td className="px-5 py-3"><BadgeStatut statut={c.statut} /></td>
                   <td className="px-5 py-3 text-right font-bold tabular-nums text-marine-500">

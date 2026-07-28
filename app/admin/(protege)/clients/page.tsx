@@ -3,13 +3,22 @@ import { apiBackendAuthentifie } from "@/lib/auth-serveur";
 import { formaterHTG } from "@/lib/types-catalogue";
 import { EntetePage } from "@/components/admin/EntetePage";
 import { ChampRecherche } from "@/components/admin/ChampRecherche";
+import { Bouton } from "@/components/Bouton";
 
 export const metadata = { title: "Clients — Admin" };
+
+const LIBELLES_TYPE_CLIENT: Record<string, string> = {
+  PARTICULIER: "Particulier",
+  ENTREPRISE: "Entreprise",
+  ONG: "ONG",
+  INSTITUTION_ETATIQUE: "Institution étatique",
+};
 
 interface ClientResume {
   email: string;
   nom: string;
   entreprise: string | null;
+  typeClient: string;
   telephone: string;
   utilisateurId: string | null;
   nbCommandes: number;
@@ -43,7 +52,11 @@ export default async function PageClientsAdmin({
       <EntetePage
         titre="Clients"
         description="Chaque client est identifié par son e-mail de contact — les commandes passées sans compte sont donc incluses."
-      />
+      >
+        <Bouton taille="petit" href="/admin/commandes/nouvelle">
+          Nouvelle commande
+        </Bouton>
+      </EntetePage>
 
       <ChampRecherche placeholder="Rechercher un nom, une entreprise, un e-mail, un téléphone…" />
 
@@ -78,11 +91,16 @@ export default async function PageClientsAdmin({
                         {c.entreprise || c.nom}
                       </Link>
                       {c.entreprise && <div className="text-xs text-marine-400">{c.nom}</div>}
-                      {!c.utilisateurId && (
-                        <span className="mt-1 inline-flex rounded-full bg-marine-50 px-2 py-0.5 text-[10px] font-bold text-marine-400">
-                          sans compte
+                      <div className="mt-1 flex gap-1">
+                        <span className="inline-flex rounded-full bg-cyan-50 px-2 py-0.5 text-[10px] font-bold text-cyan-700">
+                          {LIBELLES_TYPE_CLIENT[c.typeClient] ?? c.typeClient}
                         </span>
-                      )}
+                        {!c.utilisateurId && (
+                          <span className="inline-flex rounded-full bg-marine-50 px-2 py-0.5 text-[10px] font-bold text-marine-400">
+                            sans compte
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td className="px-5 py-3">
                       <div className="text-marine-500">{c.email}</div>

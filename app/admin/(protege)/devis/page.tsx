@@ -90,7 +90,11 @@ export default async function PageDevisAdmin({ searchParams }: { searchParams: P
                 devis.map((d) => (
                   <tr key={d.id} className="transition-colors hover:bg-creme-100">
                     <td className="px-5 py-3 font-bold text-marine-500">{d.numero}</td>
-                    <td className="px-5 py-3 text-marine-400">{d.commande.numero}</td>
+                    <td className="px-5 py-3 text-marine-400">
+                      <Link href={`/admin/commandes/${d.commande.numero}`} className="hover:text-magenta-500 hover:underline">
+                        {d.commande.numero}
+                      </Link>
+                    </td>
                     <td className="px-5 py-3">
                       <div className="font-medium text-marine-500">{d.commande.nomContact}</div>
                       <div className="text-xs text-marine-400">{d.commande.emailContact}</div>
@@ -102,7 +106,7 @@ export default async function PageDevisAdmin({ searchParams }: { searchParams: P
                       {d.totalCents !== undefined ? formaterHTG(d.totalCents) : "—"}
                     </td>
                     <td className="px-5 py-3 whitespace-nowrap text-marine-400">
-                      {new Date(d.expireLe).toLocaleDateString("fr-HT")}
+                      {new Date(d.expireLe).toLocaleDateString("fr-HT", { timeZone: "America/Port-au-Prince" })}
                     </td>
                     <td className="px-5 py-3 text-right">
                       <BoutonPdf type="devis" numero={d.numero} />

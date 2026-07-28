@@ -3,6 +3,7 @@ import { apiBackendAuthentifie } from "@/lib/auth-serveur";
 import { formaterHTG } from "@/lib/types-catalogue";
 import { EntetePage } from "@/components/admin/EntetePage";
 import { BadgeStatut, libelleStatut } from "@/components/admin/BadgeStatut";
+import { Bouton } from "@/components/Bouton";
 
 export const metadata = { title: "Commandes — Admin" };
 
@@ -44,7 +45,16 @@ export default async function PageCommandesAdmin({
 
   return (
     <>
-      <EntetePage titre="Commandes" description="Toutes les commandes, du devis demandé à la clôture." />
+      <EntetePage titre="Commandes" description="Toutes les commandes, du devis demandé à la clôture.">
+        <div className="flex gap-2">
+          <Bouton taille="petit" variante="contour" href="/admin/ventes-rapides">
+            Vente rapide
+          </Bouton>
+          <Bouton taille="petit" href="/admin/commandes/nouvelle">
+            Nouvelle commande
+          </Bouton>
+        </div>
+      </EntetePage>
 
       <div className="flex flex-wrap gap-1.5">
         <Link
@@ -95,7 +105,11 @@ export default async function PageCommandesAdmin({
               ) : (
                 commandes.map((c) => (
                   <tr key={c.id} className="transition-colors hover:bg-creme-100">
-                    <td className="px-5 py-3 font-bold text-marine-500">{c.numero}</td>
+                    <td className="px-5 py-3 font-bold text-marine-500">
+                      <Link href={`/admin/commandes/${c.numero}`} className="hover:text-magenta-500 hover:underline">
+                        {c.numero}
+                      </Link>
+                    </td>
                     <td className="px-5 py-3">
                       <div className="font-medium text-marine-500">{c.nomContact}</div>
                       <div className="text-xs text-marine-400">{c.emailContact}</div>
