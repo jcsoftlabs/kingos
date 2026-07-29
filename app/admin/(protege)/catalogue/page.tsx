@@ -3,6 +3,7 @@ import { FormulaireNouvelleCategorie } from "@/components/admin/catalogue/Formul
 import { FormulaireNouveauService } from "@/components/admin/catalogue/FormulaireNouveauService";
 import { GestionCategorie } from "@/components/admin/catalogue/GestionCategorie";
 import { LigneService } from "@/components/admin/catalogue/LigneService";
+import { ImportCsv } from "@/components/admin/catalogue/ImportCsv";
 import { EntetePage } from "@/components/admin/EntetePage";
 
 export const metadata = { title: "Catalogue — Admin" };
@@ -58,6 +59,10 @@ export default async function PageCatalogueAdmin() {
 
       <div>
         <FormulaireNouveauService categories={categories.map((c) => ({ id: c.id, nom: c.nom }))} />
+      </div>
+
+      <div className="mt-4">
+        <ImportCsv />
       </div>
 
       <div className="mt-8 space-y-8">
