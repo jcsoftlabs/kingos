@@ -15,7 +15,27 @@ export function RechercheClient({ onSelectionner }: { onSelectionner: (client: C
   const [resultats, setResultats] = useState<ClientTrouve[]>([]);
   const [ouvert, setOuvert] = useState(false);
   const [enCours, setEnCours] = useState(false);
+  const [recents, setRecents] = useState<ClientTrouve[]>([]);
   const minuteur = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  async function chargerRecents() {
+    if (recents.length > 0) {
+      setResultats(recents);
+      setOuvert(true);
+      return;
+    }
+    setEnCours(true);
+    try {
+      const reponse = await fetch("/api/admin/clients");
+      const corps = await reponse.json();
+      const liste = corps.succes && corps.donnees ? corps.donnees.slice(0, 8) : [];
+      setRecents(liste);
+      setResultats(liste);
+      setOuvert(true);
+    } finally {
+      setEnCours(false);
+    }
+  }
 
   useEffect(() => {
     if (minuteur.current) clearTimeout(minuteur.current);
@@ -45,7 +65,7 @@ export function RechercheClient({ onSelectionner }: { onSelectionner: (client: C
       <input
         value={requete}
         onChange={(e) => setRequete(e.target.value)}
-        onFocus={() => resultats.length > 0 && setOuvert(true)}
+        onFocus={() => (requete.trim().length === 0 ? chargerRecents() : resultats.length > 0 && setOuvert(true))}
         onBlur={() => setTimeout(() => setOuvert(false), 150)}
         placeholder="Rechercher par nom, entreprise, e-mail ou téléphone…"
         className="mt-1 w-full rounded-marque border border-marine-100 px-3 py-2 text-sm"
@@ -53,6 +73,11 @@ export function RechercheClient({ onSelectionner }: { onSelectionner: (client: C
       {enCours && <p className="mt-1 text-xs text-marine-300">Recherche…</p>}
       {ouvert && resultats.length > 0 && (
         <ul className="absolute z-10 mt-1 w-full overflow-hidden rounded-marque border border-marine-100 bg-white shadow-lg">
+          {requete.trim().length === 0 && (
+            <li className="border-b border-marine-100 bg-creme-100 px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-marine-300">
+              Clients récents
+            </li>
+          )}
           {resultats.map((c) => (
             <li key={c.email}>
               <button
