@@ -4,6 +4,8 @@ import { formaterHTG } from "@/lib/types-catalogue";
 import { EntetePage } from "@/components/admin/EntetePage";
 import { ChampRecherche } from "@/components/admin/ChampRecherche";
 import { Bouton } from "@/components/Bouton";
+import { FormulaireNouveauClient } from "@/components/admin/clients/FormulaireNouveauClient";
+import { ImportClientsCsv } from "@/components/admin/clients/ImportClientsCsv";
 
 export const metadata = { title: "Clients — Admin" };
 
@@ -24,7 +26,7 @@ interface ClientResume {
   nbCommandes: number;
   caRegleCents?: string;
   impayeCents?: string;
-  derniereCommandeLe: string;
+  derniereCommandeLe: string | null;
 }
 
 interface Reponse {
@@ -53,12 +55,19 @@ export default async function PageClientsAdmin({
         titre="Clients"
         description="Chaque client est identifié par son e-mail de contact — les commandes passées sans compte sont donc incluses."
       >
-        <Bouton taille="petit" href="/admin/commandes/nouvelle">
-          Nouvelle commande
-        </Bouton>
+        <div className="flex gap-2">
+          <FormulaireNouveauClient />
+          <Bouton taille="petit" href="/admin/commandes/nouvelle">
+            Nouvelle commande
+          </Bouton>
+        </div>
       </EntetePage>
 
       <ChampRecherche placeholder="Rechercher un nom, une entreprise, un e-mail, un téléphone…" />
+
+      <div className="mt-4">
+        <ImportClientsCsv />
+      </div>
 
       <div className="mt-5 overflow-hidden rounded-xl border border-marine-100 bg-white shadow-sm">
         <div className="overflow-x-auto">
@@ -120,7 +129,7 @@ export default async function PageClientsAdmin({
                       )}
                     </td>
                     <td className="px-5 py-3 whitespace-nowrap text-marine-400">
-                      {new Date(c.derniereCommandeLe).toLocaleDateString("fr-HT")}
+                      {c.derniereCommandeLe ? new Date(c.derniereCommandeLe).toLocaleDateString("fr-HT") : "Aucune commande"}
                     </td>
                   </tr>
                 ))
