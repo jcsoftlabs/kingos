@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Bouton } from "@/components/Bouton";
 import { RechercheClient } from "./RechercheClient";
+import { UNITES_MESURE, abregeUnite, versPouces, type UniteMesure } from "@/lib/unites-mesure";
 
 interface Option {
   id: string;
@@ -34,13 +35,14 @@ interface Categorie {
 interface LigneFormulaire {
   serviceSlug: string;
   quantite: number;
-  largeurPouces: string;
-  hauteurPouces: string;
+  uniteMesure: UniteMesure;
+  hauteurSaisie: string;
+  largeurSaisie: string;
   optionsChoisies: Record<string, string>;
 }
 
 function ligneVide(): LigneFormulaire {
-  return { serviceSlug: "", quantite: 1, largeurPouces: "", hauteurPouces: "", optionsChoisies: {} };
+  return { serviceSlug: "", quantite: 1, uniteMesure: "pouces", hauteurSaisie: "", largeurSaisie: "", optionsChoisies: {} };
 }
 
 export function FormulaireNouvelleCommande({ categories }: { categories: Categorie[] }) {
@@ -77,8 +79,8 @@ export function FormulaireNouvelleCommande({ categories }: { categories: Categor
           lignes: lignes.map((l) => ({
             serviceSlug: l.serviceSlug,
             quantite: l.quantite,
-            largeurPouces: l.largeurPouces ? Number(l.largeurPouces) : undefined,
-            hauteurPouces: l.hauteurPouces ? Number(l.hauteurPouces) : undefined,
+            largeurPouces: l.largeurSaisie ? versPouces(Number(l.largeurSaisie), l.uniteMesure) : undefined,
+            hauteurPouces: l.hauteurSaisie ? versPouces(Number(l.hauteurSaisie), l.uniteMesure) : undefined,
             optionsChoisies: l.optionsChoisies,
           })),
         }),
@@ -192,25 +194,52 @@ export function FormulaireNouvelleCommande({ categories }: { categories: Categor
                   {service?.mode === "SURFACE" && (
                     <>
                       <div>
-                        <label className="block text-xs font-bold text-marine-500">Largeur (po)</label>
+                        <label className="block text-xs font-bold text-marine-500">Unité</label>
+                        <select
+                          value={ligne.uniteMesure}
+                          onChange={(e) => majLigne(i, { uniteMesure: e.target.value as UniteMesure })}
+                          className="mt-1 rounded-marque border border-marine-100 px-3 py-2 text-sm"
+                        >
+                          {UNITES_MESURE.map((u) => (
+                            <option key={u.valeur} value={u.valeur}>
+                              {u.libelle}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-marine-500">Hauteur ({abregeUnite(ligne.uniteMesure)})</label>
                         <input
                           type="number"
+                          step="any"
                           required
-                          value={ligne.largeurPouces}
-                          onChange={(e) => majLigne(i, { largeurPouces: e.target.value })}
+                          value={ligne.hauteurSaisie}
+                          onChange={(e) => majLigne(i, { hauteurSaisie: e.target.value })}
                           className="mt-1 w-24 rounded-marque border border-marine-100 px-3 py-2 text-sm"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-marine-500">Hauteur (po)</label>
+                        <label className="block text-xs font-bold text-marine-500">Largeur ({abregeUnite(ligne.uniteMesure)})</label>
                         <input
                           type="number"
+                          step="any"
                           required
-                          value={ligne.hauteurPouces}
-                          onChange={(e) => majLigne(i, { hauteurPouces: e.target.value })}
+                          value={ligne.largeurSaisie}
+                          onChange={(e) => majLigne(i, { largeurSaisie: e.target.value })}
                           className="mt-1 w-24 rounded-marque border border-marine-100 px-3 py-2 text-sm"
                         />
                       </div>
+                      {ligne.hauteurSaisie && ligne.largeurSaisie && (
+                        <p className="w-full text-xs font-medium text-marine-400">
+                          {ligne.hauteurSaisie} × {ligne.largeurSaisie} {abregeUnite(ligne.uniteMesure)} ={" "}
+                          {(
+                            (versPouces(Number(ligne.hauteurSaisie), ligne.uniteMesure) *
+                              versPouces(Number(ligne.largeurSaisie), ligne.uniteMesure)) /
+                            144
+                          ).toFixed(2)}{" "}
+                          pi²
+                        </p>
+                      )}
                     </>
                   )}
                   {lignes.length > 1 && (

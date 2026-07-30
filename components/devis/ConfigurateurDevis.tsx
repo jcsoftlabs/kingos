@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Bouton } from "@/components/Bouton";
 import type { CategorieResume, ResultatSimulation, ServiceDetail } from "@/lib/types-catalogue";
 import { formaterHTG } from "@/lib/types-catalogue";
+import { UNITES_MESURE, abregeUnite, versPouces, type UniteMesure } from "@/lib/unites-mesure";
 
 const DELAI_DEBOUNCE_MS = 400;
 
@@ -21,9 +22,16 @@ export function ConfigurateurDevis({ categories }: { categories: CategorieResume
   const [chargementService, setChargementService] = useState(false);
 
   const [quantite, setQuantite] = useState(1);
-  const [largeurPouces, setLargeurPouces] = useState<number | "">("");
-  const [hauteurPouces, setHauteurPouces] = useState<number | "">("");
+  const [uniteMesure, setUniteMesure] = useState<UniteMesure>("pouces");
+  const [hauteurSaisie, setHauteurSaisie] = useState<number | "">("");
+  const [largeurSaisie, setLargeurSaisie] = useState<number | "">("");
   const [optionsChoisies, setOptionsChoisies] = useState<Record<string, string>>({});
+
+  // Le contrat avec l'API reste en pouces (tarification.ts) — la conversion
+  // se fait ici, pour laisser au client le choix de son unité de saisie.
+  const hauteurPouces = hauteurSaisie === "" ? "" : versPouces(hauteurSaisie, uniteMesure);
+  const largeurPouces = largeurSaisie === "" ? "" : versPouces(largeurSaisie, uniteMesure);
+  const surfaceApercuPi2 = hauteurPouces !== "" && largeurPouces !== "" ? (hauteurPouces * largeurPouces) / 144 : null;
 
   const [resultat, setResultat] = useState<ResultatSimulation | null>(null);
   const [erreurSimulation, setErreurSimulation] = useState<string | null>(null);
@@ -178,27 +186,50 @@ export function ConfigurateurDevis({ categories }: { categories: CategorieResume
             {service && service.mode !== "SUR_DEVIS" && (
               <div className="mt-6 space-y-5">
                 {service.mode === "SURFACE" && (
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-3">
                     <div>
-                      <label className="block text-sm font-bold text-marine-500">Largeur (pouces)</label>
-                      <input
-                        type="number"
-                        min={1}
-                        value={largeurPouces}
-                        onChange={(e) => setLargeurPouces(e.target.value ? Number(e.target.value) : "")}
-                        className="mt-2 w-full rounded-marque border border-marine-100 px-4 py-3 text-sm"
-                      />
+                      <label className="block text-sm font-bold text-marine-500">Unité de mesure</label>
+                      <select
+                        value={uniteMesure}
+                        onChange={(e) => setUniteMesure(e.target.value as UniteMesure)}
+                        className="mt-2 w-full rounded-marque border border-marine-100 px-4 py-3 text-sm sm:w-56"
+                      >
+                        {UNITES_MESURE.map((u) => (
+                          <option key={u.valeur} value={u.valeur}>
+                            {u.libelle}
+                          </option>
+                        ))}
+                      </select>
                     </div>
-                    <div>
-                      <label className="block text-sm font-bold text-marine-500">Hauteur (pouces)</label>
-                      <input
-                        type="number"
-                        min={1}
-                        value={hauteurPouces}
-                        onChange={(e) => setHauteurPouces(e.target.value ? Number(e.target.value) : "")}
-                        className="mt-2 w-full rounded-marque border border-marine-100 px-4 py-3 text-sm"
-                      />
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-bold text-marine-500">Hauteur ({abregeUnite(uniteMesure)})</label>
+                        <input
+                          type="number"
+                          min={0.01}
+                          step="any"
+                          value={hauteurSaisie}
+                          onChange={(e) => setHauteurSaisie(e.target.value ? Number(e.target.value) : "")}
+                          className="mt-2 w-full rounded-marque border border-marine-100 px-4 py-3 text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-bold text-marine-500">Largeur ({abregeUnite(uniteMesure)})</label>
+                        <input
+                          type="number"
+                          min={0.01}
+                          step="any"
+                          value={largeurSaisie}
+                          onChange={(e) => setLargeurSaisie(e.target.value ? Number(e.target.value) : "")}
+                          className="mt-2 w-full rounded-marque border border-marine-100 px-4 py-3 text-sm"
+                        />
+                      </div>
                     </div>
+                    {surfaceApercuPi2 !== null && (
+                      <p className="text-xs font-medium text-marine-400">
+                        {hauteurSaisie} × {largeurSaisie} {abregeUnite(uniteMesure)} = {surfaceApercuPi2.toFixed(2)} pi²
+                      </p>
+                    )}
                   </div>
                 )}
 
