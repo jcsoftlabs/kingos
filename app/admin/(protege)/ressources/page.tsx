@@ -69,7 +69,9 @@ export default async function PageRessourcesAdmin() {
                     </td>
                     <td className="px-5 py-3 text-marine-400">{r.categorie.nom}</td>
                     <td className="px-5 py-3 text-right tabular-nums text-marine-500">{r.nbTelechargements}</td>
-                    <td className="px-5 py-3 text-marine-400">{new Date(r.creeLe).toLocaleDateString("fr-HT")}</td>
+                    <td className="px-5 py-3 text-marine-400">
+                      {new Date(r.creeLe).toLocaleDateString("fr-HT", { timeZone: "America/Port-au-Prince" })}
+                    </td>
                     <td className="px-5 py-3 text-right">
                       <BoutonVisibiliteContenu id={r.id} visible={r.publiee} champVisibilite="publiee" base="ressources" />
                     </td>

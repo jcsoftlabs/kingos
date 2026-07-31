@@ -91,10 +91,10 @@ export function FormulaireCoordonneesClient({ email, nom, entreprise, typeClient
             <dd className="font-medium text-marine-500">
               {compte ? (
                 <>
-                  Oui — créé le {new Date(compte.creeLe).toLocaleDateString("fr-HT")}
+                  Oui — créé le {new Date(compte.creeLe).toLocaleDateString("fr-HT", { timeZone: "America/Port-au-Prince" })}
                   <div className="text-xs font-normal text-marine-400">
                     {compte.derniereConnexion
-                      ? `dernière connexion ${new Date(compte.derniereConnexion).toLocaleDateString("fr-HT")}`
+                      ? `dernière connexion ${new Date(compte.derniereConnexion).toLocaleDateString("fr-HT", { timeZone: "America/Port-au-Prince" })}`
                       : "jamais connecté"}
                   </div>
                 </>

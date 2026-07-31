@@ -129,7 +129,9 @@ export default async function PageClientsAdmin({
                       )}
                     </td>
                     <td className="px-5 py-3 whitespace-nowrap text-marine-400">
-                      {c.derniereCommandeLe ? new Date(c.derniereCommandeLe).toLocaleDateString("fr-HT") : "Aucune commande"}
+                      {c.derniereCommandeLe
+                        ? new Date(c.derniereCommandeLe).toLocaleDateString("fr-HT", { timeZone: "America/Port-au-Prince" })
+                        : "Aucune commande"}
                     </td>
                   </tr>
                 ))

@@ -70,7 +70,7 @@ export default async function PageRecu({ params }: { params: Promise<{ numero: s
         <div className="my-2 border-t border-dashed border-black" />
 
         <p>Reçu : {facture.numero}</p>
-        <p>Date : {new Date(facture.creeLe).toLocaleString("fr-HT")}</p>
+        <p>Date : {new Date(facture.creeLe).toLocaleString("fr-HT", { timeZone: "America/Port-au-Prince" })}</p>
         <p>Client : {contenu.client.entreprise || contenu.client.nom}</p>
 
         <div className="my-2 border-t border-dashed border-black" />

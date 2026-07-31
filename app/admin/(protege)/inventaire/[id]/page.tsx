@@ -121,7 +121,11 @@ export default async function PageArticleInventaire({ params }: { params: Promis
                       {m.commandeId && <span className="ml-1 text-[11px] text-marine-300">(auto — production)</span>}
                     </td>
                     <td className="px-5 py-3 whitespace-nowrap text-marine-400">
-                      {new Date(m.creeLe).toLocaleString("fr-HT", { dateStyle: "short", timeStyle: "short" })}
+                      {new Date(m.creeLe).toLocaleString("fr-HT", {
+                        dateStyle: "short",
+                        timeStyle: "short",
+                        timeZone: "America/Port-au-Prince",
+                      })}
                     </td>
                   </tr>
                 ))

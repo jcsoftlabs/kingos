@@ -51,7 +51,9 @@ export default async function PageRealisationsAdmin() {
                       <div className="text-xs font-normal text-marine-400">{r.slug}</div>
                     </td>
                     <td className="px-5 py-3 text-marine-400">{r.client || "—"}</td>
-                    <td className="px-5 py-3 text-marine-400">{new Date(r.creeLe).toLocaleDateString("fr-HT")}</td>
+                    <td className="px-5 py-3 text-marine-400">
+                      {new Date(r.creeLe).toLocaleDateString("fr-HT", { timeZone: "America/Port-au-Prince" })}
+                    </td>
                     <td className="px-5 py-3 text-right">
                       <BoutonVisibiliteContenu id={r.id} visible={r.visible} champVisibilite="visible" base="realisations" />
                     </td>

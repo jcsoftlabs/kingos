@@ -230,7 +230,7 @@ export default async function PageTableauDeBord() {
                   <div className="shrink-0 text-right">
                     {e.nouveauStatut && <BadgeStatut statut={e.nouveauStatut} />}
                     <p className="mt-1 text-[11px] text-marine-300">
-                      {new Date(e.creeLe).toLocaleDateString("fr-HT", { day: "2-digit", month: "short" })}
+                      {new Date(e.creeLe).toLocaleDateString("fr-HT", { day: "2-digit", month: "short", timeZone: "America/Port-au-Prince" })}
                     </p>
                   </div>
                 </li>

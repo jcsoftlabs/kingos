@@ -98,9 +98,15 @@ export default async function PageFicheClient({ params }: { params: Promise<{ em
               {stats.premiereCommandeLe ? (
                 <>
                   Client depuis le{" "}
-                  <strong>{new Date(stats.premiereCommandeLe).toLocaleDateString("fr-HT")}</strong>
+                  <strong>{new Date(stats.premiereCommandeLe).toLocaleDateString("fr-HT", { timeZone: "America/Port-au-Prince" })}</strong>
                   {stats.derniereCommandeLe && (
-                    <> — dernière commande le <strong>{new Date(stats.derniereCommandeLe).toLocaleDateString("fr-HT")}</strong></>
+                    <>
+                      {" "}
+                      — dernière commande le{" "}
+                      <strong>
+                        {new Date(stats.derniereCommandeLe).toLocaleDateString("fr-HT", { timeZone: "America/Port-au-Prince" })}
+                      </strong>
+                    </>
                   )}
                 </>
               ) : (
@@ -140,7 +146,7 @@ export default async function PageFicheClient({ params }: { params: Promise<{ em
                     {c.totalCents !== undefined ? formaterHTG(c.totalCents) : "—"}
                   </td>
                   <td className="px-5 py-3 whitespace-nowrap text-marine-400">
-                    {new Date(c.creeLe).toLocaleDateString("fr-HT")}
+                    {new Date(c.creeLe).toLocaleDateString("fr-HT", { timeZone: "America/Port-au-Prince" })}
                   </td>
                 </tr>
               ))}

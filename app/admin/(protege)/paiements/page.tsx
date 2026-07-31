@@ -65,7 +65,7 @@ export default async function PageChequesEnAttente() {
                       {c.montantCents !== undefined ? formaterHTG(c.montantCents) : "—"}
                     </td>
                     <td className="px-5 py-3 whitespace-nowrap text-marine-400">
-                      {new Date(c.creeLe).toLocaleDateString("fr-HT")}
+                      {new Date(c.creeLe).toLocaleDateString("fr-HT", { timeZone: "America/Port-au-Prince" })}
                     </td>
                     <td className="px-5 py-3">
                       <ActionsCheque paiementId={c.id} />

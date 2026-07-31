@@ -98,7 +98,10 @@ export default async function PageCommandeDetail({ params }: { params: Promise<{
         ← Toutes les commandes
       </Link>
 
-      <EntetePage titre={commande.numero} description={`Créée le ${new Date(commande.creeLe).toLocaleDateString("fr-HT")}`}>
+      <EntetePage
+        titre={commande.numero}
+        description={`Créée le ${new Date(commande.creeLe).toLocaleDateString("fr-HT", { timeZone: "America/Port-au-Prince" })}`}
+      >
         <BadgeStatut statut={commande.statut} />
       </EntetePage>
 
@@ -260,7 +263,13 @@ export default async function PageCommandeDetail({ params }: { params: Promise<{
                 <li key={e.id} className="border-l-2 border-marine-100 pl-3">
                   <p className="text-sm text-marine-500">{e.message}</p>
                   <p className="text-xs text-marine-300">
-                    {new Date(e.creeLe).toLocaleString("fr-HT", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}
+                    {new Date(e.creeLe).toLocaleString("fr-HT", {
+                      day: "2-digit",
+                      month: "short",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      timeZone: "America/Port-au-Prince",
+                    })}
                   </p>
                 </li>
               ))}

@@ -122,7 +122,7 @@ export default async function PageCommandesAdmin({
                       {c.totalCents !== undefined ? formaterHTG(c.totalCents) : "—"}
                     </td>
                     <td className="px-5 py-3 whitespace-nowrap text-marine-400">
-                      {new Date(c.creeLe).toLocaleDateString("fr-HT")}
+                      {new Date(c.creeLe).toLocaleDateString("fr-HT", { timeZone: "America/Port-au-Prince" })}
                     </td>
                   </tr>
                 ))

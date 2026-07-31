@@ -84,7 +84,13 @@ export default async function PageJournalAudit({ searchParams }: { searchParams:
                       {e.entite} <span className="font-mono text-xs">{e.entiteId.slice(0, 8)}</span>
                     </td>
                     <td className="px-5 py-3 whitespace-nowrap text-marine-400">
-                      {new Date(e.creeLe).toLocaleString("fr-HT", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}
+                      {new Date(e.creeLe).toLocaleString("fr-HT", {
+                        day: "2-digit",
+                        month: "short",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        timeZone: "America/Port-au-Prince",
+                      })}
                     </td>
                   </tr>
                 ))
