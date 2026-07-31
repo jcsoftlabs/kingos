@@ -198,6 +198,16 @@ export function IconeSupport(props: Props) {
   );
 }
 
+export function IconeManuel(props: Props) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v17H6.5A2.5 2.5 0 0 0 4 21.5v-17Z" />
+      <path d="M4 19a2.5 2.5 0 0 1 2.5-2.5H20" />
+      <path d="M8 7h8M8 10.5h5" />
+    </svg>
+  );
+}
+
 export function IconeDeconnexion(props: Props) {
   return (
     <svg {...base} {...props}>

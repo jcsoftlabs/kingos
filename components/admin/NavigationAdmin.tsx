@@ -19,6 +19,7 @@ import {
   IconeInventaire,
   IconeContrat,
   IconeDemande,
+  IconeManuel,
 } from "@/components/icones/admin";
 import { IconeEclair } from "@/components/icones";
 
@@ -40,6 +41,7 @@ const ICONES = {
   inventaire: IconeInventaire,
   contrat: IconeContrat,
   demande: IconeDemande,
+  manuel: IconeManuel,
 } as const;
 
 export interface Section {

@@ -50,6 +50,10 @@ const SECTIONS: Section[] = [
       { href: "/admin/journal", libelle: "Journal d'audit", icone: "journal" },
     ],
   },
+  {
+    titre: "Aide",
+    liens: [{ href: "/admin/manuel", libelle: "Manuel d'utilisation", icone: "manuel" }],
+  },
 ];
 
 export default async function LayoutAdmin({ children }: { children: React.ReactNode }) {
