@@ -16,6 +16,7 @@ import {
   IconeRealisations,
   IconeRessources,
   IconeSupport,
+  IconeInventaire,
 } from "@/components/icones/admin";
 import { IconeEclair } from "@/components/icones";
 
@@ -34,6 +35,7 @@ const ICONES = {
   realisations: IconeRealisations,
   ressources: IconeRessources,
   support: IconeSupport,
+  inventaire: IconeInventaire,
 } as const;
 
 export interface Section {

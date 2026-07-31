@@ -29,6 +29,7 @@ const SECTIONS: Section[] = [
       { href: "/admin/paiements", libelle: "Chèques en attente", icone: "cheque" },
       { href: "/admin/clients", libelle: "Clients", icone: "clients" },
       { href: "/admin/support", libelle: "Support", icone: "support" },
+      { href: "/admin/inventaire", libelle: "Inventaires", icone: "inventaire" },
     ],
   },
   {
@@ -70,11 +71,17 @@ export default async function LayoutAdmin({ children }: { children: React.ReactN
       ? corpsSupport.donnees.filter((c) => c.statut === "OUVERTE" && c.nbNonLus > 0).length
       : 0;
 
+  interface ArticleInventaireResume { enAlerte: boolean }
+  const { corps: corpsInventaire } = await apiBackendAuthentifie<ArticleInventaireResume[]>("/api/admin/inventaire/articles");
+  const nbArticlesEnAlerte =
+    corpsInventaire.succes && corpsInventaire.donnees ? corpsInventaire.donnees.filter((a) => a.enAlerte).length : 0;
+
+  const BADGES: Record<string, number> = { "/admin/support": nbConversationsEnAttente, "/admin/inventaire": nbArticlesEnAlerte };
   const sections = SECTIONS.map((section) => ({
     ...section,
     liens: section.liens
       .filter((l) => !LIENS_SUPER_ADMIN.includes(l.href) || utilisateur.role === "SUPER_ADMIN")
-      .map((l) => (l.href === "/admin/support" ? { ...l, badge: nbConversationsEnAttente } : l)),
+      .map((l) => (l.href in BADGES ? { ...l, badge: BADGES[l.href] } : l)),
   })).filter((section) => section.liens.length > 0);
 
   const initiales = `${utilisateur.prenom?.[0] ?? ""}${utilisateur.nom[0] ?? ""}`.toUpperCase() || "K";

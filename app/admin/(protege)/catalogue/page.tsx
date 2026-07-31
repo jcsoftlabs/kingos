@@ -35,6 +35,8 @@ interface Service {
   delaiJours: number;
   visible: boolean;
   attributs: Attribut[];
+  articleInventaireId: string | null;
+  consommationParUnite: string | null;
 }
 
 interface Categorie {
@@ -44,9 +46,19 @@ interface Categorie {
   services: Service[];
 }
 
+interface ArticleInventaire {
+  id: string;
+  nom: string;
+  unite: string;
+}
+
 export default async function PageCatalogueAdmin() {
-  const { corps } = await apiBackendAuthentifie<Categorie[]>("/api/admin/catalogue");
+  const [{ corps }, { corps: corpsArticles }] = await Promise.all([
+    apiBackendAuthentifie<Categorie[]>("/api/admin/catalogue"),
+    apiBackendAuthentifie<ArticleInventaire[]>("/api/admin/inventaire/articles"),
+  ]);
   const categories = corps.succes && corps.donnees ? corps.donnees : [];
+  const articles = corpsArticles.succes && corpsArticles.donnees ? corpsArticles.donnees : [];
 
   return (
     <>
@@ -92,7 +104,7 @@ export default async function PageCatalogueAdmin() {
                           </td>
                         </tr>
                       ) : (
-                        categorie.services.map((service) => <LigneService key={service.id} service={service} />)
+                        categorie.services.map((service) => <LigneService key={service.id} service={service} articles={articles} />)
                       )}
                     </tbody>
                   </table>

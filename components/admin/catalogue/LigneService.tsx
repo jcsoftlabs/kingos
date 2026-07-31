@@ -33,9 +33,17 @@ interface Service {
   delaiJours: number;
   visible: boolean;
   attributs: Attribut[];
+  articleInventaireId: string | null;
+  consommationParUnite: string | null;
 }
 
-export function LigneService({ service }: { service: Service }) {
+interface ArticleInventaire {
+  id: string;
+  nom: string;
+  unite: string;
+}
+
+export function LigneService({ service, articles }: { service: Service; articles: ArticleInventaire[] }) {
   const router = useRouter();
   const [edition, setEdition] = useState(false);
   const [valeurs, setValeurs] = useState({
@@ -45,6 +53,8 @@ export function LigneService({ service }: { service: Service }) {
     prixBase: (Number(service.prixBaseCents) / 100).toString(),
     unite: service.unite ?? "",
     delaiJours: service.delaiJours,
+    articleInventaireId: service.articleInventaireId ?? "",
+    consommationParUnite: service.consommationParUnite ?? "",
   });
   const [enCours, setEnCours] = useState(false);
   const [erreur, setErreur] = useState<string | null>(null);
@@ -64,6 +74,8 @@ export function LigneService({ service }: { service: Service }) {
           prixBaseCents: Math.round(Number(valeurs.prixBase) * 100).toString(),
           unite: valeurs.unite || undefined,
           delaiJours: valeurs.delaiJours,
+          articleInventaireId: valeurs.articleInventaireId || null,
+          consommationParUnite: valeurs.articleInventaireId && valeurs.consommationParUnite ? Number(valeurs.consommationParUnite) : null,
         }),
       });
       const corps = await reponse.json();
@@ -158,6 +170,37 @@ export function LigneService({ service }: { service: Service }) {
                   className="mt-0.5 w-20 rounded-marque border border-marine-100 px-2 py-1.5 text-xs"
                 />
               </div>
+              <div>
+                <label className="block text-[10px] font-bold text-marine-500">Article consommé</label>
+                <select
+                  value={valeurs.articleInventaireId}
+                  onChange={(e) => setValeurs((v) => ({ ...v, articleInventaireId: e.target.value }))}
+                  className="mt-0.5 w-40 rounded-marque border border-marine-100 px-2 py-1.5 text-xs"
+                >
+                  <option value="">— Aucun —</option>
+                  {articles.map((a) => (
+                    <option key={a.id} value={a.id}>
+                      {a.nom}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {valeurs.articleInventaireId && (
+                <div>
+                  <label className="block text-[10px] font-bold text-marine-500">
+                    Consommation / {service.mode === "SURFACE" ? "pi²" : "unité"}
+                  </label>
+                  <input
+                    type="number"
+                    min={0}
+                    step="any"
+                    required
+                    value={valeurs.consommationParUnite}
+                    onChange={(e) => setValeurs((v) => ({ ...v, consommationParUnite: e.target.value }))}
+                    className="mt-0.5 w-24 rounded-marque border border-marine-100 px-2 py-1.5 text-xs"
+                  />
+                </div>
+              )}
               <div className="w-full">
                 <label className="block text-[10px] font-bold text-marine-500">Description</label>
                 <textarea
