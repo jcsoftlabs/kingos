@@ -28,6 +28,7 @@ const SECTIONS: Section[] = [
       { href: "/admin/factures", libelle: "Factures", icone: "facture" },
       { href: "/admin/paiements", libelle: "Chèques en attente", icone: "cheque" },
       { href: "/admin/clients", libelle: "Clients", icone: "clients" },
+      { href: "/admin/contrats", libelle: "Contrats", icone: "contrat" },
       { href: "/admin/support", libelle: "Support", icone: "support" },
       { href: "/admin/inventaire", libelle: "Inventaires", icone: "inventaire" },
     ],

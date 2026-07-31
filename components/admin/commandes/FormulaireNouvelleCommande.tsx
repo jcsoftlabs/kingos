@@ -1,10 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Bouton } from "@/components/Bouton";
 import { RechercheClient } from "./RechercheClient";
 import { UNITES_MESURE, abregeUnite, versPouces, type UniteMesure } from "@/lib/unites-mesure";
+
+interface ContratActif {
+  id: string;
+  numero: string;
+  objet: string;
+  remisePct: string | null;
+}
 
 interface Option {
   id: string;
@@ -55,12 +62,30 @@ export function FormulaireNouvelleCommande({ categories }: { categories: Categor
   const [entreprise, setEntreprise] = useState("");
   const [typeClient, setTypeClient] = useState("PARTICULIER");
   const [lignes, setLignes] = useState<LigneFormulaire[]>([ligneVide()]);
+  const [contrats, setContrats] = useState<ContratActif[]>([]);
+  const [contratId, setContratId] = useState("");
   const [enCours, setEnCours] = useState(false);
   const [erreur, setErreur] = useState<string | null>(null);
 
   function majLigne(index: number, patch: Partial<LigneFormulaire>) {
     setLignes((l) => l.map((ligne, i) => (i === index ? { ...ligne, ...patch } : ligne)));
   }
+
+  // Un client sous contrat actif peut y rattacher sa commande — pas de
+  // resaisie des conditions négociées à chaque fois (§Contrats).
+  useEffect(() => {
+    if (!emailContact.includes("@")) {
+      setContrats([]);
+      setContratId("");
+      return;
+    }
+    const identifiant = setTimeout(() => {
+      fetch(`/api/admin/contrats?emailClient=${encodeURIComponent(emailContact)}`)
+        .then((r) => r.json())
+        .then((corps) => setContrats(corps.succes && corps.donnees ? corps.donnees : []));
+    }, 400);
+    return () => clearTimeout(identifiant);
+  }, [emailContact]);
 
   async function soumettre(e: React.FormEvent) {
     e.preventDefault();
@@ -76,6 +101,7 @@ export function FormulaireNouvelleCommande({ categories }: { categories: Categor
           telContact,
           entreprise: entreprise || undefined,
           typeClient,
+          contratId: contratId || undefined,
           lignes: lignes.map((l) => ({
             serviceSlug: l.serviceSlug,
             quantite: l.quantite,
@@ -143,6 +169,24 @@ export function FormulaireNouvelleCommande({ categories }: { categories: Categor
             <label className="block text-xs font-bold text-marine-500">E-mail</label>
             <input required type="email" value={emailContact} onChange={(e) => setEmailContact(e.target.value)} className="mt-1 w-full rounded-marque border border-marine-100 px-3 py-2 text-sm" />
           </div>
+          {contrats.length > 0 && (
+            <div className="sm:col-span-2">
+              <label className="block text-xs font-bold text-marine-500">Rattacher à un contrat (optionnel)</label>
+              <select
+                value={contratId}
+                onChange={(e) => setContratId(e.target.value)}
+                className="mt-1 w-full rounded-marque border border-marine-100 px-3 py-2 text-sm"
+              >
+                <option value="">— Aucun —</option>
+                {contrats.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.numero} — {c.objet}
+                    {c.remisePct ? ` (remise ${c.remisePct}%)` : ""}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
         </div>
       </div>
 
