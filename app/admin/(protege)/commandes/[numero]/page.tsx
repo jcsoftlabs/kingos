@@ -82,10 +82,15 @@ export async function generateMetadata({ params }: { params: Promise<{ numero: s
 
 export default async function PageCommandeDetail({ params }: { params: Promise<{ numero: string }> }) {
   const { numero } = await params;
-  const [{ corps }, utilisateur] = await Promise.all([
+  const [{ corps }, utilisateur, { corps: corpsParametres }] = await Promise.all([
     apiBackendAuthentifie<Commande>(`/api/commandes/${numero}`),
     obtenirUtilisateurCourant(),
+    // Sert au formulaire de paiement : sans taux configuré, l'encaissement en
+    // dollars n'est simplement pas proposé.
+    apiBackendAuthentifie<{ tauxChangeUSD: string | null }>("/api/admin/parametres"),
   ]);
+  const tauxChangeUSD =
+    corpsParametres.succes && corpsParametres.donnees?.tauxChangeUSD ? Number(corpsParametres.donnees.tauxChangeUSD) : null;
   if (!corps.succes || !corps.donnees) notFound();
   const commande = corps.donnees;
   const peutAgirCommercial = !!utilisateur && ROLES_COMMERCIAUX.includes(utilisateur.role);
@@ -202,6 +207,7 @@ export default async function PageCommandeDetail({ params }: { params: Promise<{
                 <FormulairePaiement
                   factureId={factureOuverte.id}
                   soldeRestantCents={(BigInt(factureOuverte.totalCents) - BigInt(factureOuverte.payeCents)).toString()}
+                  tauxChangeUSD={tauxChangeUSD}
                 />
               </div>
             </div>
