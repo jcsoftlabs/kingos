@@ -4,7 +4,7 @@ import { formaterHTG } from "@/lib/types-catalogue";
 import { EntetePage } from "@/components/admin/EntetePage";
 import { BadgeStatut, libelleStatut } from "@/components/admin/BadgeStatut";
 import { CourbeChiffreAffaires, RepartitionServices } from "@/components/admin/Graphiques";
-import { IconeTendance, IconeHorloge, IconeAlerte, IconePanier, IconeUtilisateurs, IconeFacture } from "@/components/icones/admin";
+import { IconeTendance, IconeHorloge, IconeAlerte, IconePanier, IconeUtilisateurs, IconeFacture, IconeCheque } from "@/components/icones/admin";
 
 export const metadata = { title: "Tableau de bord — Admin" };
 
@@ -15,6 +15,15 @@ interface TableauDeBord {
   caDuMoisCents: string | null;
   caMoisPrecedentCents: string | null;
   montantImpayeCents: string | null;
+  anciennetteImpaye: {
+    recentCents: string | null;
+    moyenCents: string | null;
+    ancienCents: string | null;
+    nbEnRetard: number;
+    montantEnRetardCents: string | null;
+  };
+  chequesEnAttente: number;
+  montantChequesEnAttenteCents: string | null;
   panierMoyenCents: string | null;
   nouveauxClients30j: number;
   commandes30j: number;
@@ -56,6 +65,55 @@ function Variation({ courant, precedent }: { courant: string | null; precedent: 
     <span className={`text-xs font-bold ${positif ? "text-foret-500" : "text-magenta-600"}`}>
       {positif ? "▲" : "▼"} {Math.abs(pct)}% <span className="font-medium text-marine-300">vs mois dernier</span>
     </span>
+  );
+}
+
+/**
+ * Balance âgée : le total de l'impayé ne dit pas s'il s'agit de factures
+ * récentes (encore dans les délais normaux) ou de créances qui traînent.
+ * Les couleurs suivent l'urgence, pas la palette de marque.
+ */
+function BalanceAgee({
+  anciennete,
+  total,
+}: {
+  anciennete: { recentCents: string | null; moyenCents: string | null; ancienCents: string | null };
+  total: string;
+}) {
+  const tranches = [
+    { libelle: "Moins de 30 jours", cents: anciennete.recentCents, barre: "bg-foret-500", texte: "text-foret-600" },
+    { libelle: "30 à 60 jours", cents: anciennete.moyenCents, barre: "bg-lime-500", texte: "text-marine-500" },
+    { libelle: "Plus de 60 jours", cents: anciennete.ancienCents, barre: "bg-magenta-500", texte: "text-magenta-600" },
+  ];
+  const totalNombre = Number(total);
+
+  if (totalNombre === 0) {
+    return <p className="py-6 text-center text-sm text-marine-400">Aucune facture impayée — tout est encaissé.</p>;
+  }
+
+  return (
+    <ul className="space-y-3">
+      {tranches.map((t) => {
+        const montant = Number(t.cents ?? 0);
+        const part = Math.round((montant / totalNombre) * 100);
+        return (
+          <li key={t.libelle}>
+            <div className="flex items-baseline justify-between gap-3">
+              <span className="text-sm text-marine-500">{t.libelle}</span>
+              <span className={`shrink-0 text-sm font-bold tabular-nums ${montant > 0 ? t.texte : "text-marine-300"}`}>
+                {formaterHTG(t.cents ?? 0)}
+              </span>
+            </div>
+            <div className="mt-1.5 flex items-center gap-2">
+              <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-marine-50">
+                <span className={`block h-full rounded-full ${t.barre}`} style={{ width: `${part}%` }} />
+              </span>
+              <span className="w-9 shrink-0 text-right text-[11px] font-semibold tabular-nums text-marine-400">{part}%</span>
+            </div>
+          </li>
+        );
+      })}
+    </ul>
   );
 }
 
@@ -147,6 +205,46 @@ export default async function PageTableauDeBord() {
           detail={
             <span className="text-xs text-marine-400">
               {d.tauxConversionPct !== null ? `${d.tauxConversionPct}% de devis convertis` : "pas encore de devis"}
+            </span>
+          }
+        />
+      </div>
+
+      <div className="mt-5 grid gap-5 lg:grid-cols-3">
+        <div className="rounded-xl border border-marine-100 bg-white shadow-sm lg:col-span-2">
+          <div className="flex items-center justify-between border-b border-marine-100 px-5 py-4">
+            <h2 className="text-sm font-bold text-marine-500">Impayé par ancienneté</h2>
+            <span className="text-xs font-semibold text-marine-400">depuis l&apos;émission de la facture</span>
+          </div>
+          <div className="px-5 py-5">
+            {masque ? (
+              <p className="py-6 text-center text-sm text-marine-400">Montants masqués pour votre rôle.</p>
+            ) : (
+              <>
+                <BalanceAgee anciennete={d.anciennetteImpaye} total={d.montantImpayeCents!} />
+                {d.anciennetteImpaye.nbEnRetard > 0 && (
+                  <p className="mt-4 rounded-marque bg-magenta-50 px-3 py-2 text-xs font-semibold text-magenta-600">
+                    {d.anciennetteImpaye.nbEnRetard} facture(s) au-delà de l&apos;échéance convenue —{" "}
+                    {formaterHTG(d.anciennetteImpaye.montantEnRetardCents!)} à relancer.
+                  </p>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+
+        <Carte
+          libelle="Chèques en attente"
+          valeur={d.chequesEnAttente}
+          icone={<IconeCheque className="h-4 w-4" />}
+          ton="info"
+          detail={
+            <span className="text-xs text-marine-400">
+              {masque
+                ? "encaissement non confirmé"
+                : d.chequesEnAttente > 0
+                  ? `${formaterHTG(d.montantChequesEnAttenteCents!)} pas encore en banque`
+                  : "rien à encaisser"}
             </span>
           }
         />
