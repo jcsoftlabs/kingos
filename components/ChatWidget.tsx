@@ -35,6 +35,21 @@ function IconeFermer({ className }: { className?: string }) {
   );
 }
 
+/** Avatar de l'agent — visage stylisé, cheveux longs, pour humaniser le côté "réponse du staff" du fil. */
+function AvatarAgente({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 32 32" className={className}>
+      <circle cx="16" cy="16" r="16" fill="#E6008C" />
+      <path d="M16 6c-5 0-8 3.6-8 8.2 0 2 .4 3.6 1 5l1-.8c-.6-2-.6-9 6-9s6.6 7 6 9l1 .8c.6-1.4 1-3 1-5C24 9.6 21 6 16 6Z" fill="#1A124B" />
+      <circle cx="16" cy="15.5" r="6" fill="#FBCCE9" />
+      <circle cx="13.3" cy="15.5" r="0.9" fill="#1A124B" />
+      <circle cx="18.7" cy="15.5" r="0.9" fill="#1A124B" />
+      <path d="M13.5 18.3c1.6 1.2 3.4 1.2 5 0" fill="none" stroke="#1A124B" strokeWidth="1.1" strokeLinecap="round" />
+      <path d="M6 27c1.5-4 4.8-6 10-6s8.5 2 10 6" fill="#1A124B" />
+    </svg>
+  );
+}
+
 export function ChatWidget() {
   const [ouvert, setOuvert] = useState(false);
   const [disponible, setDisponible] = useState(false);
@@ -211,7 +226,8 @@ export function ChatWidget() {
                   </p>
                 )}
                 {conversation.messages.map((m) => (
-                  <div key={m.id} className={`flex ${m.expediteur === "CLIENT" ? "justify-end" : "justify-start"}`}>
+                  <div key={m.id} className={`flex items-end gap-2 ${m.expediteur === "CLIENT" ? "justify-end" : "justify-start"}`}>
+                    {m.expediteur === "STAFF" && <AvatarAgente className="h-6 w-6 shrink-0" />}
                     <div
                       className={`max-w-[80%] rounded-marque px-3 py-2 text-sm ${
                         m.expediteur === "CLIENT" ? "bg-magenta-500 text-white" : "bg-white text-marine-500 shadow-sm"
