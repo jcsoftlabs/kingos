@@ -3,7 +3,7 @@ import { apiBackendAuthentifie } from "@/lib/auth-serveur";
 import { formaterHTG } from "@/lib/types-catalogue";
 import { EntetePage } from "@/components/admin/EntetePage";
 import { BadgeStatut, libelleStatut } from "@/components/admin/BadgeStatut";
-import { CourbeChiffreAffaires, RepartitionServices } from "@/components/admin/Graphiques";
+import { CourbeChiffreAffaires, Donut, type SegmentDonut } from "@/components/admin/Graphiques";
 import { IconeTendance, IconeHorloge, IconeAlerte, IconePanier, IconeUtilisateurs, IconeFacture, IconeCheque } from "@/components/icones/admin";
 
 export const metadata = { title: "Tableau de bord — Admin" };
@@ -15,6 +15,9 @@ interface TableauDeBord {
   caDuMoisCents: string | null;
   caMoisPrecedentCents: string | null;
   montantImpayeCents: string | null;
+  totalFactureCents: string | null;
+  totalEncaisseCents: string | null;
+  nbFactures: number;
   anciennetteImpaye: {
     recentCents: string | null;
     moyenCents: string | null;
@@ -167,11 +170,57 @@ export default async function PageTableauDeBord() {
   const masque = d.caDuMoisCents === null; // rôle PRODUCTION : aucun montant
   const totalCommandes = d.commandesParStatut.reduce((acc, s) => acc + s.total, 0);
 
+  const segmentsEncaissement: SegmentDonut[] = masque
+    ? []
+    : [
+        {
+          libelle: "Encaissé",
+          valeur: Number(d.totalEncaisseCents),
+          couleur: "#1E643C",
+          affichage: formaterHTG(d.totalEncaisseCents!),
+        },
+        {
+          libelle: "Reste à encaisser",
+          valeur: Number(d.montantImpayeCents),
+          couleur: "#E6008C",
+          affichage: formaterHTG(d.montantImpayeCents!),
+        },
+      ];
+
+  // Sans montants (rôle PRODUCTION), on classe par volume plutôt que par CA.
+  const COULEURS_SERVICES = ["#E6008C", "#00A0E6", "#1E643C", "#5F4EA0", "#E4E900", "#F466BD"];
+  const segmentsServices: SegmentDonut[] = d.topServices.map((s, i) => ({
+    libelle: s.serviceNom,
+    valeur: masque ? s.quantite : Number(s.caCents ?? 0),
+    couleur: COULEURS_SERVICES[i % COULEURS_SERVICES.length]!,
+    affichage: masque ? `${s.quantite} u.` : formaterHTG(s.caCents ?? 0),
+  }));
+
   return (
     <>
       <EntetePage titre="Tableau de bord" description="Vue d'ensemble de l'activité Kingo's." />
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <Carte
+          libelle="Total facturé"
+          valeur={masque ? "—" : formaterHTG(d.totalFactureCents!)}
+          icone={<IconeFacture className="h-4 w-4" />}
+          ton="neutre"
+          detail={<span className="text-xs text-marine-400">{d.nbFactures} facture(s) émise(s)</span>}
+        />
+        <Carte
+          libelle="Total encaissé"
+          valeur={masque ? "—" : formaterHTG(d.totalEncaisseCents!)}
+          icone={<IconeTendance className="h-4 w-4" />}
+          ton="succes"
+          detail={
+            <span className="text-xs text-marine-400">
+              {masque || Number(d.totalFactureCents) === 0
+                ? "depuis le début"
+                : `${Math.round((Number(d.totalEncaisseCents) / Number(d.totalFactureCents)) * 100)}% du facturé`}
+            </span>
+          }
+        />
         <Carte
           libelle="CA du mois"
           valeur={masque ? "—" : formaterHTG(d.caDuMoisCents!)}
@@ -208,6 +257,44 @@ export default async function PageTableauDeBord() {
             </span>
           }
         />
+      </div>
+
+      <div className="mt-5 grid gap-5 lg:grid-cols-2">
+        <div className="rounded-xl border border-marine-100 bg-white shadow-sm">
+          <div className="flex items-center justify-between border-b border-marine-100 px-5 py-4">
+            <h2 className="text-sm font-bold text-marine-500">Encaissement</h2>
+            <span className="text-xs font-semibold text-marine-400">sur le total facturé</span>
+          </div>
+          <div className="px-5 py-5">
+            {masque ? (
+              <p className="py-10 text-center text-sm text-marine-400">Montants masqués pour votre rôle.</p>
+            ) : (
+              <Donut
+                segments={segmentsEncaissement}
+                libelleCentre="Facturé"
+                valeurCentre={formaterHTG(d.totalFactureCents!)}
+              />
+            )}
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-marine-100 bg-white shadow-sm">
+          <div className="flex items-center justify-between border-b border-marine-100 px-5 py-4">
+            <h2 className="text-sm font-bold text-marine-500">Répartition par service</h2>
+            <span className="text-xs font-semibold text-marine-400">{masque ? "en volume" : "en chiffre d'affaires"}</span>
+          </div>
+          <div className="px-5 py-5">
+            {segmentsServices.length === 0 ? (
+              <p className="py-10 text-center text-sm text-marine-400">Aucun service commandé pour l&apos;instant.</p>
+            ) : (
+              <Donut
+                segments={segmentsServices}
+                libelleCentre="Services"
+                valeurCentre={String(d.topServices.length)}
+              />
+            )}
+          </div>
+        </div>
       </div>
 
       <div className="mt-5 grid gap-5 lg:grid-cols-3">
@@ -250,26 +337,17 @@ export default async function PageTableauDeBord() {
         />
       </div>
 
-      <div className="mt-5 grid gap-5 lg:grid-cols-3">
-        <div className="rounded-xl border border-marine-100 bg-white shadow-sm lg:col-span-2">
-          <div className="flex items-center justify-between border-b border-marine-100 px-5 py-4">
-            <h2 className="text-sm font-bold text-marine-500">Chiffre d&apos;affaires — 12 derniers mois</h2>
-            <span className="text-xs font-semibold text-marine-400">factures encaissées</span>
-          </div>
-          <div className="px-4 py-5">
-            {masque ? (
-              <p className="py-10 text-center text-sm text-marine-400">Montants masqués pour votre rôle.</p>
-            ) : (
-              <CourbeChiffreAffaires donnees={d.caParMois} />
-            )}
-          </div>
+      <div className="mt-5 rounded-xl border border-marine-100 bg-white shadow-sm">
+        <div className="flex items-center justify-between border-b border-marine-100 px-5 py-4">
+          <h2 className="text-sm font-bold text-marine-500">Chiffre d&apos;affaires — 12 derniers mois</h2>
+          <span className="text-xs font-semibold text-marine-400">factures encaissées</span>
         </div>
-
-        <div className="rounded-xl border border-marine-100 bg-white shadow-sm">
-          <div className="flex items-center justify-between border-b border-marine-100 px-5 py-4">
-            <h2 className="text-sm font-bold text-marine-500">Services les plus sollicités</h2>
-          </div>
-          <RepartitionServices services={d.topServices} masque={masque} />
+        <div className="px-4 py-5">
+          {masque ? (
+            <p className="py-10 text-center text-sm text-marine-400">Montants masqués pour votre rôle.</p>
+          ) : (
+            <CourbeChiffreAffaires donnees={d.caParMois} />
+          )}
         </div>
       </div>
 

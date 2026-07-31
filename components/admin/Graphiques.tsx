@@ -83,43 +83,81 @@ export function CourbeChiffreAffaires({ donnees }: { donnees: { mois: string; ca
   );
 }
 
-export function RepartitionServices({
-  services,
-  masque,
-}: {
-  services: { serviceNom: string; caCents: string | null; quantite: number; commandes: number }[];
-  masque: boolean;
-}) {
-  if (services.length === 0) {
-    return <p className="px-5 py-10 text-center text-sm text-marine-400">Aucun service commandé pour l&apos;instant.</p>;
-  }
+export interface SegmentDonut {
+  libelle: string;
+  valeur: number;
+  couleur: string;
+  /** Formaté par l'appelant : montant en gourdes, nombre d'unités… */
+  affichage: string;
+}
 
-  // Sans montants (rôle PRODUCTION), on classe par volume plutôt que par CA.
-  const base = masque ? services.map((s) => s.quantite) : services.map((s) => Number(s.caCents ?? 0));
-  const total = base.reduce((a, b) => a + b, 0) || 1;
-  const COULEURS = ["bg-magenta-500", "bg-cyan-500", "bg-foret-500", "bg-marine-400", "bg-magenta-300", "bg-cyan-300"];
+/**
+ * Anneau proportionnel — un arc par segment, tracé avec stroke-dasharray sur
+ * un cercle plutôt qu'avec des chemins calculés à la main (moins de
+ * trigonométrie, et les arcs restent nets à n'importe quelle taille).
+ */
+export function Donut({
+  segments,
+  libelleCentre,
+  valeurCentre,
+}: {
+  segments: SegmentDonut[];
+  libelleCentre: string;
+  valeurCentre: string;
+}) {
+  const total = segments.reduce((acc, s) => acc + s.valeur, 0);
+  const rayon = 60;
+  const circonference = 2 * Math.PI * rayon;
+  let cumul = 0;
 
   return (
-    <ul className="divide-y divide-marine-100">
-      {services.map((s, i) => {
-        const part = Math.round((base[i]! / total) * 100);
-        return (
-          <li key={s.serviceNom} className="px-5 py-3">
-            <div className="flex items-baseline justify-between gap-3">
-              <span className="truncate text-sm font-medium text-marine-500">{s.serviceNom}</span>
-              <span className="shrink-0 text-sm font-bold tabular-nums text-marine-500">
-                {masque ? `${s.quantite} u.` : formaterHTG(s.caCents ?? 0)}
-              </span>
-            </div>
-            <div className="mt-1.5 flex items-center gap-2">
-              <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-marine-50">
-                <span className={`block h-full rounded-full ${COULEURS[i % COULEURS.length]}`} style={{ width: `${part}%` }} />
-              </span>
+    <div className="flex flex-col items-center gap-5 sm:flex-row sm:items-center sm:gap-6">
+      <svg viewBox="0 0 160 160" className="h-40 w-40 shrink-0" role="img" aria-label={libelleCentre}>
+        <g transform="rotate(-90 80 80)">
+          <circle cx="80" cy="80" r={rayon} fill="none" stroke="#F0EEF8" strokeWidth="20" />
+          {total > 0 &&
+            segments.map((s) => {
+              const part = s.valeur / total;
+              const arc = part * circonference;
+              const decalage = -cumul * circonference;
+              cumul += part;
+              if (s.valeur === 0) return null;
+              return (
+                <circle
+                  key={s.libelle}
+                  cx="80"
+                  cy="80"
+                  r={rayon}
+                  fill="none"
+                  stroke={s.couleur}
+                  strokeWidth="20"
+                  strokeDasharray={`${arc.toFixed(2)} ${circonference.toFixed(2)}`}
+                  strokeDashoffset={decalage.toFixed(2)}
+                />
+              );
+            })}
+        </g>
+        <text x="80" y="74" textAnchor="middle" fontSize="10" fontWeight="700" fill="#8F80C6" letterSpacing="0.5">
+          {libelleCentre.toUpperCase()}
+        </text>
+        <text x="80" y="92" textAnchor="middle" fontSize="15" fontWeight="800" fill="#1A124B">
+          {valeurCentre}
+        </text>
+      </svg>
+
+      <ul className="w-full space-y-2.5">
+        {segments.map((s) => {
+          const part = total > 0 ? Math.round((s.valeur / total) * 100) : 0;
+          return (
+            <li key={s.libelle} className="flex items-baseline gap-2.5">
+              <span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: s.couleur }} />
+              <span className="flex-1 truncate text-sm text-marine-500">{s.libelle}</span>
+              <span className="shrink-0 text-sm font-bold tabular-nums text-marine-500">{s.affichage}</span>
               <span className="w-9 shrink-0 text-right text-[11px] font-semibold tabular-nums text-marine-400">{part}%</span>
-            </div>
-          </li>
-        );
-      })}
-    </ul>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
   );
 }
