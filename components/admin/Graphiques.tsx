@@ -12,16 +12,25 @@ function libelleMois(cle: string) {
   return MOIS_COURTS[mois - 1] ?? cle;
 }
 
+// Abrégé pour l'axe vertical ("150 k HTG" plutôt que "150 000,00 HTG") —
+// la valeur complète reste lisible au survol de chaque point (title).
+function libelleAxe(gourdes: number): string {
+  if (gourdes >= 1000) return `${(gourdes / 1000).toLocaleString("fr-HT", { maximumFractionDigits: 1 })} k`;
+  return gourdes.toLocaleString("fr-HT", { maximumFractionDigits: 0 });
+}
+
 export function CourbeChiffreAffaires({ donnees }: { donnees: { mois: string; caCents: string | null }[] }) {
   const valeurs = donnees.map((d) => Number(d.caCents ?? 0) / 100);
   const max = Math.max(...valeurs, 1);
+  const padGauche = 52;
+  const padDroite = 8;
   const largeur = 640;
   const hauteur = 180;
-  const padX = 8;
-  const pas = valeurs.length > 1 ? (largeur - padX * 2) / (valeurs.length - 1) : 0;
+  const largeurTrace = largeur - padGauche - padDroite;
+  const pas = valeurs.length > 1 ? largeurTrace / (valeurs.length - 1) : 0;
 
   const points = valeurs.map((v, i) => {
-    const x = padX + i * pas;
+    const x = padGauche + i * pas;
     const y = hauteur - (v / max) * (hauteur - 24) - 8;
     return { x, y, v };
   });
@@ -40,22 +49,32 @@ export function CourbeChiffreAffaires({ donnees }: { donnees: { mois: string; ca
           </linearGradient>
         </defs>
 
-        {[0.25, 0.5, 0.75, 1].map((f) => (
-          <line key={f} x1="0" y1={hauteur - f * (hauteur - 24) - 8} x2={largeur} y2={hauteur - f * (hauteur - 24) - 8} stroke="#DAD4EC" strokeWidth="1" strokeDasharray="3 4" />
-        ))}
+        {[0, 0.25, 0.5, 0.75, 1].map((f) => {
+          const y = hauteur - f * (hauteur - 24) - 8;
+          return (
+            <g key={f}>
+              <line x1={padGauche} y1={y} x2={largeur} y2={y} stroke="#DAD4EC" strokeWidth="1" strokeDasharray="3 4" />
+              <text x={padGauche - 8} y={y} textAnchor="end" dominantBaseline="middle" fontSize="10" fontWeight="600" fill="#8F80C6">
+                {libelleAxe(max * f)}
+              </text>
+            </g>
+          );
+        })}
 
         {!totalNul && (
           <>
             <path d={aire} fill="url(#degradeCa)" />
             <path d={ligne} fill="none" stroke="#E6008C" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
             {points.map((p, i) => (
-              <circle key={i} cx={p.x} cy={p.y} r="3" fill="#fff" stroke="#E6008C" strokeWidth="2" />
+              <circle key={i} cx={p.x} cy={p.y} r="3" fill="#fff" stroke="#E6008C" strokeWidth="2">
+                <title>{`${libelleMois(donnees[i]!.mois)} — ${formaterHTG(Math.round(p.v * 100))}`}</title>
+              </circle>
             ))}
           </>
         )}
       </svg>
 
-      <div className="mt-1 flex justify-between px-1 text-[10px] font-semibold uppercase text-marine-300">
+      <div className="mt-1 flex justify-between text-[10px] font-semibold uppercase text-marine-300" style={{ paddingLeft: `${(padGauche / largeur) * 100}%`, paddingRight: `${(padDroite / largeur) * 100}%` }}>
         {donnees.map((d) => (
           <span key={d.mois}>{libelleMois(d.mois)}</span>
         ))}
