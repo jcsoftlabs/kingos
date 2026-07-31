@@ -89,6 +89,7 @@ export default async function PageJournalAudit({ searchParams }: { searchParams:
                         month: "short",
                         hour: "2-digit",
                         minute: "2-digit",
+                        hour12: true,
                         timeZone: "America/Port-au-Prince",
                       })}
                     </td>

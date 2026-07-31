@@ -35,7 +35,7 @@ interface ConversationDetail {
 }
 
 function formaterHeure(iso: string) {
-  return new Date(iso).toLocaleString("fr-HT", { dateStyle: "short", timeStyle: "short", timeZone: "America/Port-au-Prince" });
+  return new Date(iso).toLocaleString("fr-HT", { dateStyle: "short", timeStyle: "short", hour12: true, timeZone: "America/Port-au-Prince" });
 }
 
 export function PanneauSupport() {

@@ -124,6 +124,7 @@ export default async function PageArticleInventaire({ params }: { params: Promis
                       {new Date(m.creeLe).toLocaleString("fr-HT", {
                         dateStyle: "short",
                         timeStyle: "short",
+                        hour12: true,
                         timeZone: "America/Port-au-Prince",
                       })}
                     </td>

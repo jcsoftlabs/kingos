@@ -268,6 +268,7 @@ export default async function PageCommandeDetail({ params }: { params: Promise<{
                       month: "short",
                       hour: "2-digit",
                       minute: "2-digit",
+                      hour12: true,
                       timeZone: "America/Port-au-Prince",
                     })}
                   </p>

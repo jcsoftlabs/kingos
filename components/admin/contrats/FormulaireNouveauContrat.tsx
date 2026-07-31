@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Bouton } from "@/components/Bouton";
+import { RechercheClient } from "@/components/admin/commandes/RechercheClient";
 
 const VALEURS_INITIALES = {
   emailClient: "",
@@ -67,7 +68,16 @@ export function FormulaireNouveauContrat() {
   return (
     <form onSubmit={creer} className="mb-5 rounded-xl border border-marine-100 bg-white p-5 shadow-sm">
       <h2 className="text-sm font-bold text-marine-500">Nouveau contrat</h2>
-      <div className="mt-3 grid gap-3 sm:grid-cols-2">
+
+      <div className="mt-3">
+        <RechercheClient
+          onSelectionner={(client) =>
+            setValeurs((v) => ({ ...v, emailClient: client.email, nomClient: client.nom, entreprise: client.entreprise ?? "" }))
+          }
+        />
+      </div>
+
+      <div className="mt-4 grid gap-3 border-t border-marine-100 pt-4 sm:grid-cols-2">
         <div>
           <label className="block text-xs font-bold text-marine-500">E-mail du client</label>
           <input

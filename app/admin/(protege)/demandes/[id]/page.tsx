@@ -36,7 +36,7 @@ export default async function PageDemandeAdmin({ params }: { params: Promise<{ i
 
       <EntetePage
         titre={demande.nomContact}
-        description={`Reçue le ${new Date(demande.creeLe).toLocaleString("fr-HT", { timeZone: "America/Port-au-Prince", dateStyle: "long", timeStyle: "short" })}`}
+        description={`Reçue le ${new Date(demande.creeLe).toLocaleString("fr-HT", { timeZone: "America/Port-au-Prince", dateStyle: "long", timeStyle: "short", hour12: true })}`}
       />
 
       <div className="grid gap-5 lg:grid-cols-3">
@@ -66,7 +66,7 @@ export default async function PageDemandeAdmin({ params }: { params: Promise<{ i
                 <div>
                   <dt className="text-xs text-marine-400">Traitée le</dt>
                   <dd className="font-medium text-marine-500">
-                    {new Date(demande.traiteeLe).toLocaleString("fr-HT", { timeZone: "America/Port-au-Prince", dateStyle: "long", timeStyle: "short" })}
+                    {new Date(demande.traiteeLe).toLocaleString("fr-HT", { timeZone: "America/Port-au-Prince", dateStyle: "long", timeStyle: "short", hour12: true })}
                   </dd>
                 </div>
               )}
