@@ -51,6 +51,7 @@ export function FormulaireParametres({ parametres, lectureSeule }: { parametres:
   const [moncashNumero, setMoncashNumero] = useState(parametres.moncashNumero ?? "");
   const [natcashNumero, setNatcashNumero] = useState(parametres.natcashNumero ?? "");
   const [tauxTaxePct, setTauxTaxePct] = useState(parametres.tauxTaxePct);
+  const [tauxChangeUSD, setTauxChangeUSD] = useState(parametres.tauxChangeUSD ?? "");
   const [conditionsDevis, setConditionsDevis] = useState(parametres.conditionsDevis);
   const [conditionsFacture, setConditionsFacture] = useState(parametres.conditionsFacture);
   const [banques, setBanques] = useState<Banque[]>(parametres.banques ?? []);
@@ -82,6 +83,7 @@ export function FormulaireParametres({ parametres, lectureSeule }: { parametres:
           moncashNumero: moncashNumero || null,
           natcashNumero: natcashNumero || null,
           tauxTaxePct: Number(tauxTaxePct),
+          tauxChangeUSD: tauxChangeUSD ? Number(tauxChangeUSD) : null,
           conditionsDevis,
           conditionsFacture,
           banques: banques.filter((b) => b.banque && b.numeroCompte),
@@ -118,9 +120,20 @@ export function FormulaireParametres({ parametres, lectureSeule }: { parametres:
         <ChampTexte label="E-mail" type="email" value={email} onChange={setEmail} disabled={lectureSeule} />
         <ChampTexte label="Site web" value={siteWeb} onChange={setSiteWeb} disabled={lectureSeule} />
         <ChampTexte label="Taux de taxe (%)" type="number" value={tauxTaxePct} onChange={setTauxTaxePct} disabled={lectureSeule} />
+        <ChampTexte
+          label="Taux de change (HTG pour 1 USD)"
+          type="number"
+          value={tauxChangeUSD}
+          onChange={setTauxChangeUSD}
+          disabled={lectureSeule}
+        />
         <ChampTexte label="Numéro MonCash" value={moncashNumero} onChange={setMoncashNumero} disabled={lectureSeule} />
         <ChampTexte label="Numéro NatCash" value={natcashNumero} onChange={setNatcashNumero} disabled={lectureSeule} />
       </div>
+      <p className="-mt-3 text-xs text-marine-400">
+        Le taux de change détermine l&apos;équivalent en dollars affiché sur les devis et factures, en plus du
+        montant en gourdes. Laissez vide pour n&apos;afficher que les gourdes.
+      </p>
 
       <div>
         <div className="flex items-center justify-between">
