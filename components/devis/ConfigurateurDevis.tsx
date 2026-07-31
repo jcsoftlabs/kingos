@@ -179,7 +179,7 @@ export function ConfigurateurDevis({ categories }: { categories: CategorieResume
             {service && service.mode === "SUR_DEVIS" && (
               <p className="mt-6 rounded-marque bg-creme-200 p-4 text-sm text-marine-500">
                 Ce service se chiffre sur mesure : passez par le formulaire de{" "}
-                <a href="/contact" className="font-bold underline">contact</a> plutôt que le devis instantané.
+                <a href="/demande-speciale" className="font-bold underline">demande spéciale</a> plutôt que le devis instantané.
               </p>
             )}
 

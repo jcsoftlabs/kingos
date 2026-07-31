@@ -160,6 +160,15 @@ export function IconeJournal(props: Props) {
   );
 }
 
+export function IconeDemande(props: Props) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M12 19c-4.4 0-8-2.7-8-6s3.6-6 8-6 8 2.7 8 6c0 1.3-.5 2.5-1.5 3.5.2.9.6 1.7 1.3 2.3-1.2.2-2.4-.1-3.4-.7-1.3.6-2.8.9-4.4.9Z" />
+      <path d="M12 10v3M12 15.5v.01" />
+    </svg>
+  );
+}
+
 export function IconeContrat(props: Props) {
   return (
     <svg {...base} {...props}>

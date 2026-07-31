@@ -29,6 +29,7 @@ const SECTIONS: Section[] = [
       { href: "/admin/paiements", libelle: "Chèques en attente", icone: "cheque" },
       { href: "/admin/clients", libelle: "Clients", icone: "clients" },
       { href: "/admin/contrats", libelle: "Contrats", icone: "contrat" },
+      { href: "/admin/demandes", libelle: "Demandes", icone: "demande" },
       { href: "/admin/support", libelle: "Support", icone: "support" },
       { href: "/admin/inventaire", libelle: "Inventaires", icone: "inventaire" },
     ],
@@ -77,7 +78,16 @@ export default async function LayoutAdmin({ children }: { children: React.ReactN
   const nbArticlesEnAlerte =
     corpsInventaire.succes && corpsInventaire.donnees ? corpsInventaire.donnees.filter((a) => a.enAlerte).length : 0;
 
-  const BADGES: Record<string, number> = { "/admin/support": nbConversationsEnAttente, "/admin/inventaire": nbArticlesEnAlerte };
+  interface DemandeResume { statut: string }
+  const { corps: corpsDemandes } = await apiBackendAuthentifie<DemandeResume[]>("/api/admin/demandes");
+  const nbDemandesNouvelles =
+    corpsDemandes.succes && corpsDemandes.donnees ? corpsDemandes.donnees.filter((d) => d.statut === "NOUVELLE").length : 0;
+
+  const BADGES: Record<string, number> = {
+    "/admin/support": nbConversationsEnAttente,
+    "/admin/inventaire": nbArticlesEnAlerte,
+    "/admin/demandes": nbDemandesNouvelles,
+  };
   const sections = SECTIONS.map((section) => ({
     ...section,
     liens: section.liens
