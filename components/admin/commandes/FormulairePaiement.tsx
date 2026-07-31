@@ -22,6 +22,10 @@ export function FormulairePaiement({
   const [numeroCheque, setNumeroCheque] = useState("");
   const [enCours, setEnCours] = useState(false);
   const [erreur, setErreur] = useState<string | null>(null);
+  // Clé stable pour CE paiement : conservée telle quelle si l'envoi échoue,
+  // pour qu'un réessai soit reconnu comme un rejeu côté serveur plutôt que
+  // comme un second encaissement. Renouvelée seulement après un succès.
+  const [cleIdempotence, setCleIdempotence] = useState(() => crypto.randomUUID());
 
   const soldeGourdes = Number(soldeRestantCents) / 100;
 
@@ -42,7 +46,7 @@ export function FormulairePaiement({
     try {
       const reponse = await fetch("/api/admin/paiements", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "Idempotency-Key": cleIdempotence },
         body: JSON.stringify({
           factureId,
           fournisseur,
@@ -56,6 +60,9 @@ export function FormulairePaiement({
         setErreur(corps.erreur?.message ?? "Enregistrement impossible");
         return;
       }
+      // Encaissement abouti : la clé a joué son rôle, le prochain paiement
+      // sur cette même facture doit en avoir une nouvelle.
+      setCleIdempotence(crypto.randomUUID());
       setOuvert(false);
       router.refresh();
     } catch {

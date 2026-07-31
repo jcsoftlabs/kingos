@@ -29,14 +29,16 @@ export const ROLES_BACK_OFFICE = ["SUPER_ADMIN", "ADMIN", "COMMERCIAL", "PRODUCT
 /** Requête authentifiée vers l'API — pages /admin et Route Handlers de mutation. */
 export async function apiBackendAuthentifie<T>(
   chemin: string,
-  options: { method?: string; body?: string } = {},
+  options: { method?: string; body?: string; headers?: Record<string, string> } = {},
 ) {
   const jeton = await lireJetonSession();
   if (!jeton) return { statut: 401 as const, corps: { succes: false as const } };
   return apiBackend<T>(chemin, {
     method: options.method,
     body: options.body,
-    headers: { "X-Jeton-Session": jeton },
+    // Le jeton de session est posé en dernier : un appelant ne peut pas
+    // l'écraser en passant un en-tête de même nom.
+    headers: { ...options.headers, "X-Jeton-Session": jeton },
     revalidate: false,
   });
 }
