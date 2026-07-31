@@ -15,6 +15,7 @@ import {
   IconeCheque,
   IconeRealisations,
   IconeRessources,
+  IconeSupport,
 } from "@/components/icones/admin";
 import { IconeEclair } from "@/components/icones";
 
@@ -32,11 +33,12 @@ const ICONES = {
   cheque: IconeCheque,
   realisations: IconeRealisations,
   ressources: IconeRessources,
+  support: IconeSupport,
 } as const;
 
 export interface Section {
   titre: string;
-  liens: { href: string; libelle: string; icone: keyof typeof ICONES }[];
+  liens: { href: string; libelle: string; icone: keyof typeof ICONES; badge?: number }[];
 }
 
 export function NavigationAdmin({ sections }: { sections: Section[] }) {
@@ -65,7 +67,12 @@ export function NavigationAdmin({ sections }: { sections: Section[] }) {
                   }`}
                 >
                   <Icone className={`h-[18px] w-[18px] shrink-0 ${actif ? "text-white" : "text-marine-200"}`} />
-                  {lien.libelle}
+                  <span className="flex-1">{lien.libelle}</span>
+                  {!!lien.badge && (
+                    <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-lime px-1 text-[10px] font-bold text-marine-600">
+                      {lien.badge}
+                    </span>
+                  )}
                 </Link>
               );
             })}

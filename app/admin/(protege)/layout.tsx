@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { redirect } from "next/navigation";
-import { obtenirUtilisateurCourant, ROLES_BACK_OFFICE } from "@/lib/auth-serveur";
+import { obtenirUtilisateurCourant, apiBackendAuthentifie, ROLES_BACK_OFFICE } from "@/lib/auth-serveur";
 import { BoutonDeconnexionAdmin } from "@/components/admin/BoutonDeconnexionAdmin";
 import { NavigationAdmin, type Section } from "@/components/admin/NavigationAdmin";
 
@@ -28,6 +28,7 @@ const SECTIONS: Section[] = [
       { href: "/admin/factures", libelle: "Factures", icone: "facture" },
       { href: "/admin/paiements", libelle: "Chèques en attente", icone: "cheque" },
       { href: "/admin/clients", libelle: "Clients", icone: "clients" },
+      { href: "/admin/support", libelle: "Support", icone: "support" },
     ],
   },
   {
@@ -61,9 +62,19 @@ export default async function LayoutAdmin({ children }: { children: React.ReactN
 
   // Gestion des comptes staff et journal d'audit : réservés au SUPER_ADMIN.
   const LIENS_SUPER_ADMIN = ["/admin/utilisateurs", "/admin/journal"];
+
+  interface ConversationSupportResume { nbNonLus: number; statut: string }
+  const { corps: corpsSupport } = await apiBackendAuthentifie<ConversationSupportResume[]>("/api/admin/support/conversations");
+  const nbConversationsEnAttente =
+    corpsSupport.succes && corpsSupport.donnees
+      ? corpsSupport.donnees.filter((c) => c.statut === "OUVERTE" && c.nbNonLus > 0).length
+      : 0;
+
   const sections = SECTIONS.map((section) => ({
     ...section,
-    liens: section.liens.filter((l) => !LIENS_SUPER_ADMIN.includes(l.href) || utilisateur.role === "SUPER_ADMIN"),
+    liens: section.liens
+      .filter((l) => !LIENS_SUPER_ADMIN.includes(l.href) || utilisateur.role === "SUPER_ADMIN")
+      .map((l) => (l.href === "/admin/support" ? { ...l, badge: nbConversationsEnAttente } : l)),
   })).filter((section) => section.liens.length > 0);
 
   const initiales = `${utilisateur.prenom?.[0] ?? ""}${utilisateur.nom[0] ?? ""}`.toUpperCase() || "K";
