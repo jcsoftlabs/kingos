@@ -128,6 +128,14 @@ export default async function LayoutAdmin({ children }: { children: React.ReactN
           <div className="mt-1.5">
             <BoutonDeconnexionAdmin />
           </div>
+          <a
+            href="https://codeshell-green.vercel.app"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-3 block text-center text-[11px] text-marine-300 hover:text-white hover:underline"
+          >
+            Kingo&apos;s CRM developed by Christopher JEROME
+          </a>
         </div>
       </aside>
 
